@@ -1,18 +1,9 @@
-// === Firebase Config ===
-const firebaseConfig = {
-  apiKey: "AIzaSyAWSnfnPvFLFnUh4KjM94jbYnj2aKY8FNc",
-  authDomain: "hive-connection-3294d.firebaseapp.com",
-  databaseURL: "https://hive-connection-3294d-default-rtdb.firebaseio.com",
-  projectId: "hive-connection-3294d",
-  storageBucket: "hive-connection-3294d.firebasestorage.app",
-  messagingSenderId: "1050669847051",
-  appId: "1:1050669847051:web:d2c502c30ada68e90aed0e",
-  measurementId: "G-BNHH4DQWMS"
-};
-firebase.initializeApp(firebaseConfig);
-
-const auth = firebase.auth();
-const db = firebase.firestore();
+// === Dummy Users ===
+const users = [
+  { role: "alumni", email: "alumni@test.com", password: "1234", redirect: "alumni.html" },
+  { role: "student", roll: "12345", password: "1234", redirect: "student.html" },
+  { role: "admin", email: "admin@test.com", password: "1234", redirect: "admin.html" }
+];
 
 // === Show Selected Form ===
 function showForm(role) {
@@ -21,59 +12,25 @@ function showForm(role) {
 }
 
 // === Handle Login ===
-async function handleLogin(e, role) {
+function handleLogin(e, role) {
   e.preventDefault();
-  const email = e.target.querySelector("input[type='email']").value;
-  const password = e.target.querySelector("input[type='password']").value;
 
-  try {
-    const userCredential = await auth.signInWithEmailAndPassword(email, password);
-    const user = userCredential.user;
-
-    // Firestore Role Check
-    const docRef = db.collection("users").doc(user.uid);
-    const docSnap = await docRef.get();
-
-    if (docSnap.exists) {
-      const userData = docSnap.data();
-
-      if (userData.role === role) {
-        if (role === "alumni") window.location.href = "alumni.html";
-        if (role === "student") window.location.href = "student.html";
-        if (role === "admin") window.location.href = "admin.html";
-      } else {
-        alert(`Role mismatch! You are registered as ${userData.role}`);
-        auth.signOut();
-      }
-    } else {
-      alert("No user profile found in Firestore!");
-    }
-  } catch (error) {
-    alert(error.message);
+  let input, password;
+  if (role === "student") {
+    input = e.target.querySelector("input[name='roll']").value;
+    password = e.target.querySelector("input[type='password']").value;
+    var user = users.find(u => u.role === role && u.roll === input && u.password === password);
+  } else {
+    input = e.target.querySelector("input[type='email']").value;
+    password = e.target.querySelector("input[type='password']").value;
+    var user = users.find(u => u.role === role && u.email === input && u.password === password);
   }
-}
 
-// === Handle Signup (NEW) ===
-async function handleSignup(e, role) {
-  e.preventDefault();
-  const email = e.target.querySelector("input[type='email']").value;
-  const password = e.target.querySelector("input[type='password']").value;
-
-  try {
-    const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-    const user = userCredential.user;
-
-    // Save user role in Firestore
-    await db.collection("users").doc(user.uid).set({
-      email: user.email,
-      role: role,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-
-    alert("Signup successful! You can now log in.");
-    showForm(role); // switch back to login
-  } catch (error) {
-    alert(error.message);
+  if (user) {
+    alert(`Login successful as ${role}`);
+    window.location.href = user.redirect;
+  } else {
+    alert(`Invalid credentials for ${role}`);
   }
 }
 
@@ -82,10 +39,5 @@ document.getElementById("alumni").addEventListener("submit", (e) => handleLogin(
 document.getElementById("student").addEventListener("submit", (e) => handleLogin(e, "student"));
 document.getElementById("admin").addEventListener("submit", (e) => handleLogin(e, "admin"));
 
-// If you have signup forms, add them too:
-document.getElementById("alumni-signup")?.addEventListener("submit", (e) => handleSignup(e, "alumni"));
-document.getElementById("student-signup")?.addEventListener("submit", (e) => handleSignup(e, "student"));
-document.getElementById("admin-signup")?.addEventListener("submit", (e) => handleSignup(e, "admin"));
-
-// Default
+// Default form
 showForm("alumni");

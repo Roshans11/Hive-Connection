@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hive Connection - Admin Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: white;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Enhanced Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(26, 26, 46, 0.9);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(139, 69, 195, 0.3);
+            transition: all 0.3s ease;
+            box-shadow: 5px 0 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo {
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(139, 69, 195, 0.2);
+            background: linear-gradient(135deg, rgba(139, 69, 195, 0.1), rgba(220, 20, 60, 0.1));
+        }
+
+        .logo h2 {
+            color: #e91e63;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .logo p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .nav-menu {
+            padding: 1rem 0;
+        }
+
+        .nav-item {
+            margin: 0.5rem 1rem;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item:hover {
+            background: linear-gradient(135deg, rgba(139, 69, 195, 0.2), rgba(220, 20, 60, 0.2));
+            transform: translateX(5px);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, rgba(139, 69, 195, 0.3), rgba(220, 20, 60, 0.3));
+            box-shadow: 0 8px 32px rgba(139, 69, 195, 0.2);
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: white;
+        }
+
+        .nav-link i {
+            margin-right: 1rem;
+            width: 20px;
+            text-align: center;
+            font-size: 1.1rem;
+            color: #e91e63;
+        }
+
+        .nav-link .badge {
+            margin-left: auto;
+            background: linear-gradient(45deg, #e91e63, #8b45c3);
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #e91e63, #8b45c3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding: 0.8rem 1rem 0.8rem 3rem;
+            border: 1px solid rgba(139, 69, 195, 0.3);
+            border-radius: 25px;
+            background: rgba(26, 26, 46, 0.8);
+            backdrop-filter: blur(10px);
+            color: white;
+            width: 300px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #e91e63;
+            box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.2);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #e91e63;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9));
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(139, 69, 195, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #e91e63, #8b45c3);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(139, 69, 195, 0.3);
+            border-color: #e91e63;
+        }
+
+        .stat-card h3 {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-card .number {
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .change {
+            color: #e91e63;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* Chart Section */
+        .chart-container {
+            background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9));
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(139, 69, 195, 0.3);
+            margin-bottom: 2rem;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .chart-header h3 {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        /* Groups Section */
+        .groups-section {
+            background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9));
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(139, 69, 195, 0.3);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .section-header h3 {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .add-group-btn, .primary-btn {
+            background: linear-gradient(45deg, #e91e63, #8b45c3);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .add-group-btn:hover, .primary-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(233, 30, 99, 0.4);
+        }
+
+        .groups-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .group-card {
+            background: rgba(26, 26, 46, 0.6);
+            border-radius: 15px;
+            padding: 1.5rem;
+            border: 1px solid rgba(139, 69, 195, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .group-card:hover {
+            background: rgba(26, 26, 46, 0.8);
+            transform: translateY(-2px);
+            border-color: #e91e63;
+        }
+
+        .group-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .group-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(45deg, #e91e63, #8b45c3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            margin-right: 1rem;
+        }
+
+        .group-info h4 {
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .group-info p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+
+        .group-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+        }
+
+        .group-stat {
+            text-align: center;
+        }
+
+        .group-stat .number {
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .group-stat .label {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.8rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, rgba(26, 26, 46, 0.95), rgba(22, 33, 62, 0.95));
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+            border: 1px solid rgba(139, 69, 195, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .modal-header h3 {
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: #e91e63;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid rgba(139, 69, 195, 0.3);
+            border-radius: 10px;
+            background: rgba(26, 26, 46, 0.8);
+            color: white;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #e91e63;
+            box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.2);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #e91e63, #8b45c3);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(139, 69, 195, 0.2);
+            color: white;
+            border: 1px solid rgba(139, 69, 195, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Simple Chart Styles */
+        .chart {
+            width: 100%;
+            height: 300px;
+            position: relative;
+            padding: 20px;
+        }
+
+        .chart-line {
+            stroke: #e91e63;
+            stroke-width: 3;
+            fill: none;
+        }
+
+        .chart-area {
+            fill: url(#gradient);
+            opacity: 0.3;
+        }
+
+        .chart-grid {
+            stroke: rgba(255, 255, 255, 0.1);
+            stroke-width: 1;
+        }
+
+        .chart-axis {
+            stroke: rgba(255, 255, 255, 0.3);
+            stroke-width: 1;
+        }
+
+        .chart-label {
+            fill: rgba(255, 255, 255, 0.6);
+            font-size: 12px;
+        }
+
+        /* Table Styles */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(139, 69, 195, 0.2);
+        }
+
+        .data-table th {
+            background: rgba(139, 69, 195, 0.2);
+            color: white;
+            font-weight: 600;
+        }
+
+        .data-table td {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .data-table tr:hover {
+            background: rgba(139, 69, 195, 0.1);
+        }
+
+        .status-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4caf50;
+        }
+
+        .status-inactive {
+            background: rgba(244, 67, 54, 0.2);
+            color: #f44336;
+        }
+
+        /* Events Styles */
+        .event-card {
+            background: rgba(26, 26, 46, 0.6);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(139, 69, 195, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .event-card:hover {
+            border-color: #e91e63;
+            transform: translateY(-2px);
+        }
+
+        .event-date {
+            background: linear-gradient(45deg, #e91e63, #8b45c3);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .donation-progress {
+            background: rgba(139, 69, 195, 0.2);
+            border-radius: 10px;
+            height: 10px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+
+        .donation-progress-fill {
+            background: linear-gradient(90deg, #e91e63, #8b45c3);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Enhanced Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <h2><i class="fas fa-hexagon"></i> Hive Connection</h2>
+                <p>Alumni Network</p>
+            </div>
+            
+            <nav class="nav-menu">
+                <div class="nav-item active" onclick="switchSection('dashboard')">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-chart-line"></i>
+                        Dashboard
+                    </a>
+                </div>
+                <div class="nav-item" onclick="switchSection('students')">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-user-graduate"></i>
+                        Students
+                        <span class="badge">1200</span>
+                    </a>
+                </div>
+                <div class="nav-item" onclick="switchSection('alumni')">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-users"></i>
+                        Alumni
+                        <span class="badge">850</span>
+                    </a>
+                </div>
+                <div class="nav-item" onclick="switchSection('news')">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-newspaper"></i>
+                        News
+                        <span class="badge">3</span>
+                    </a>
+                </div>
+                <div class="nav-item" onclick="switchSection('events')">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-calendar-alt"></i>
+                        Events
+                        <span class="badge">5</span>
+                    </a>
+                </div>
+                <div class="nav-item" onclick="switchSection('chatgroups')">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-comments"></i>
+                        Chat Groups
+                        <span class="badge">12</span>
+                    </a>
+                </div>
+                <div class="nav-item" onclick="switchSection('donations')">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-heart"></i>
+                        Donations
+                    </a>
+                </div>
+                <div class="nav-item" onclick="switchSection('notices')">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-bell"></i>
+                        Notices
+                        <span class="badge">2</span>
+                    </a>
+                </div>
+                <div class="nav-item" onclick="switchSection('settings')">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-cog"></i>
+                        Settings
+                    </a>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Dashboard Section -->
+            <div class="content-section active" id="dashboard">
+                <div class="header">
+                    <div>
+                        <h1>Admin Dashboard</h1>
+                    </div>
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search...">
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Total Students</h3>
+                        <div class="number">1,200</div>
+                        <div class="change">↗ +12% from last month</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Active Alumni</h3>
+                        <div class="number">850</div>
+                        <div class="change">↗ +8% from last month</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Upcoming Events</h3>
+                        <div class="number">5</div>
+                        <div class="change">→ Same as last month</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Active Groups</h3>
+                        <div class="number">12</div>
+                        <div class="change">↗ +3 new groups</div>
+                    </div>
+                </div>
+
+                <!-- Chart Section -->
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3>User Growth</h3>
+                    </div>
+                    <svg class="chart" viewBox="0 0 800 300">
+                        <defs>
+                            <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#e91e63;stop-opacity:0.5" />
+                                <stop offset="100%" style="stop-color:#e91e63;stop-opacity:0" />
+                            </linearGradient>
+                        </defs>
+                        
+                        <!-- Grid lines -->
+                        <g class="grid">
+                            <line x1="100" y1="50" x2="100" y2="250" class="chart-axis"/>
+                            <line x1="100" y1="250" x2="700" y2="250" class="chart-axis"/>
+                            <line x1="100" y1="200" x2="700" y2="200" class="chart-grid"/>
+                            <line x1="100" y1="150" x2="700" y2="150" class="chart-grid"/>
+                            <line x1="100" y1="100" x2="700" y2="100" class="chart-grid"/>
+                        </g>
+                        
+                        <!-- Chart area -->
+                        <path d="M100,220 L200,200 L300,180 L400,160 L500,150 L600,120 L700,80 L700,250 L100,250 Z" class="chart-area"/>
+                        
+                        <!-- Chart line -->
+                        <path d="M100,220 L200,200 L300,180 L400,160 L500,150 L600,120 L700,80" class="chart-line"/>
+                        
+                        <!-- Labels -->
+                        <text x="100" y="270" class="chart-label">Jan</text>
+                        <text x="200" y="270" class="chart-label">Feb</text>
+                        <text x="300" y="270" class="chart-label">Mar</text>
+                        <text x="400" y="270" class="chart-label">Apr</text>
+                        <text x="500" y="270" class="chart-label">May</text>
+                        <text x="600" y="270" class="chart-label">Jun</text>
+                        <text x="700" y="270" class="chart-label">Jul</text>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Students Section -->
+            <div class="content-section" id="students">
+                <div class="header">
+                    <h1>Students Management</h1>
+                    <button class="primary-btn" onclick="openModal('addStudentModal')">
+                        <i class="fas fa-plus"></i>
+                        Add Student
+                    </button>
+                </div>
+                
+                <div class="groups-section">
+                    <h3>Student List</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Student ID</th>
+                                <th>Department</th>
+                                <th>Year</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>John Smith</td>
+                                <td>CS2024001</td>
+                                <td>Computer Science</td>
+                                <td>Final Year</td>
+                                <td><span class="status-badge status-active">Active</span></td>
+                                <td><i class="fas fa-edit" style="cursor: pointer; color: #e91e63; margin-right: 10px;"></i><i class="fas fa-trash" style="cursor: pointer; color: #f44336;"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Sarah Johnson</td>
+                                <td>EE2023045</td>
+                                <td>Electrical Engineering</td>
+                                <td>Third Year</td>
+                                <td><span class="status-badge status-active">Active</span></td>
+                                <td><i class="fas fa-edit" style="cursor: pointer; color: #e91e63; margin-right: 10px;"></i><i class="fas fa-trash" style="cursor: pointer; color: #f44336;"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Mike Wilson</td>
+                                <td>ME2022078</td>
+                                <td>Mechanical Engineering</td>
+                                <td>Second Year</td>
+                                <td><span class="status-badge status-inactive">Inactive</span></td>
+                                <td><i class="fas fa-edit" style="cursor: pointer; color: #e91e63; margin-right: 10px;"></i><i class="fas fa-trash" style="cursor: pointer; color: #f44336;"></i></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Alumni Section -->
+            <div class="content-section" id="alumni">
+                <div class="header">
+                    <h1>Alumni Management</h1>
+                    <button class="primary-btn" onclick="openModal('addAlumniModal')">
+                        <i class="fas fa-plus"></i>
+                        Add Alumni
+                    </button>
+                </div>
+                
+                <div class="groups-section">
+                    <h3>Alumni Directory</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Graduation Year</th>
+                                <th>Department</th>
+                                <th>Current Company</th>
+                                <th>Position</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Emily Davis</td>
+                                <td>2020</td>
+                                <td>Computer Science</td>
+                                <td>Google</td>
+                                <td>Software Engineer</td>
+                                <td><span class="status-badge status-active">Active</span></td>
+                            </tr>
+                            <tr>
+                                <td>Robert Brown</td>
+                                <td>2019</td>
+                                <td>Electrical Engineering</td>
+                                <td>Tesla</td>
+                                <td>Hardware Engineer</td>
+                                <td><span class="status-badge status-active">Active</span></td>
+                            </tr>
+                            <tr>
+                                <td>Lisa Anderson</td>
+                                <td>2018</td>
+                                <td>Mechanical Engineering</td>
+                                <td>SpaceX</td>
+                                <td>Design Engineer</td>
+                                <td><span class="status-badge status-inactive">Inactive</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- News Section -->
+            <div class="content-section

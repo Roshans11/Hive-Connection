@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard - Hive Connection</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Reset + Fonts */
+    * {margin: 0; padding: 0; box-sizing: border-box;}
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+       background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      color: #333;
+      display: flex;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      height: 100vh;
+      position: fixed;
+      top: 0; left: 0;
+      padding: 25px 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .sidebar h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 22px;
+      letter-spacing: 1px;
+    }
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+    .sidebar ul li {
+      margin: 12px 0;
+    }
+    .sidebar ul li a {
+      text-decoration: none;
+      color: white;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      transition: 0.3s;
+      border-radius: 8px;
+    }
+    .sidebar ul li a i {
+      margin-right: 12px;
+      font-size: 18px;
+    }
+    .sidebar ul li a:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateX(5px);
+    }
+    .logout {
+      margin: 20px;
+      text-align: center;
+    }
+    .logout a {
+      color: #ffd6d6;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    /* Top Bar */
+    .topbar {
+      margin-left: 260px;
+      width: calc(100% - 260px);
+      background: #fff;
+      padding: 15px 25px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      z-index: 1000;
+    }
+    .topbar input {
+      padding: 8px 15px;
+      border: 1px solid #ccc;
+      border-radius: 20px;
+      width: 280px;
+      transition: 0.3s;
+    }
+    .topbar input:focus {
+      border-color: #1e3c72;
+      outline: none;
+    }
+    .topbar-icons i {
+      margin-left: 20px;
+      font-size: 20px;
+      cursor: pointer;
+      color: #444;
+    }
+    .topbar-icons i:hover {
+      color: #1e3c72;
+    }
+
+    /* Content */
+    .content {
+      margin-left: 260px;
+      margin-top: 80px;
+      padding: 25px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+    }
+
+    /* Cards */
+    .card {
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.1);
+      transition: 0.3s ease-in-out;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 22px rgba(0,0,0,0.15);
+    }
+    .card h3 {
+      margin-bottom: 15px;
+      color: #1e3c72;
+    }
+    .card p {
+      font-size: 14px;
+      margin-bottom: 15px;
+      color: #555;
+    }
+    button {
+      padding: 10px 18px;
+      border: none;
+      background: linear-gradient(90deg, #1e3c72, #2a5298);
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: linear-gradient(90deg, #2a5298, #1e3c72);
+    }
+
+    /* Responsive */
+    @media(max-width: 768px) {
+      .sidebar {width: 200px;}
+      .topbar {margin-left: 200px; width: calc(100% - 200px);}
+      .topbar input {width: 200px;}
+    }
+    @media(max-width: 600px) {
+      .sidebar {display: none;}
+      .topbar {margin-left: 0; width: 100%;}
+      .content {margin-left: 0;}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div>
+      <h2>Hive Student</h2>
+      <ul>
+        <li><a href="#"><i class="fas fa-user"></i>Profile</a></li>
+        <li><a href="#"><i class="fas fa-users"></i>Alumni Directory</a></li>
+        <li><a href="#"><i class="fas fa-briefcase"></i>Jobs & Careers</a></li>
+        <li><a href="#"><i class="fas fa-calendar"></i>Events</a></li>
+        <li><a href="#"><i class="fas fa-comments"></i>Communication</a></li>
+        <li><a href="#"><i class="fas fa-donate"></i>Donations</a></li>
+        <li><a href="#"><i class="fas fa-newspaper"></i>Social</a></li>
+        <li><a href="#"><i class="fas fa-chart-line"></i>Analytics</a></li>
+      </ul>
+    </div>
+    <div class="logout">
+      <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+  </div>
+
+  <!-- Top Bar -->
+  <div class="topbar">
+    <input type="text" placeholder="Search alumni, jobs, events...">
+    <div class="topbar-icons">
+      <i class="fas fa-bell"></i>
+      <i class="fas fa-user-circle"></i>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="content">
+    <div class="grid">
+      <div class="card">
+        <h3>Profile Management</h3>
+        <p>Update personal information, academic details, employment status, and skills.</p>
+        <button>Update Profile</button>
+      </div>
+      <div class="card">
+        <h3>Alumni Directory</h3>
+        <p>Search alumni by batch, department, location, or company. Connect and message alumni.</p>
+        <button>Explore Alumni</button>
+      </div>
+      <div class="card">
+        <h3>Jobs & Career</h3>
+        <p>Find jobs, internships, and mentorship opportunities. Build your resume and get guidance.</p>
+        <button>View Jobs</button>
+      </div>
+      <div class="card">
+        <h3>Events & Activities</h3>
+        <p>Check upcoming events, register, and participate in workshops, reunions, and seminars.</p>
+        <button>View Events</button>
+      </div>
+      <div class="card">
+        <h3>Communication Hub</h3>
+        <p>Join forums, newsletters, and alumni group chats to stay updated.</p>
+        <button>Open Hub</button>
+      </div>
+      <div class="card">
+        <h3>Donations</h3>
+        <p>Contribute to scholarships, projects, and fundraising campaigns. Track donations.</p>
+        <button>Donate Now</button>
+      </div>
+      <div class="card">
+        <h3>Social Features</h3>
+        <p>View alumni news feed, share achievements, and celebrate milestones.</p>
+        <button>Go Social</button>
+      </div>
+      <div class="card">
+        <h3>Analytics</h3>
+        <p>Track your growth, connections, event participation, and career history.</p>
+        <button>View Dashboard</button>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

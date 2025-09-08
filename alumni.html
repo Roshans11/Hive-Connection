@@ -24,7 +24,7 @@
     *{box-sizing:border-box;margin:0;padding:0;font-family:'Poppins',sans-serif}
     body{
       min-height:100vh;
-      background:linear-gradient(135deg,#1a2980 0%,#26d0ce 100%);
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
       display:flex;
       color:#222;
       overflow-x:hidden;
@@ -36,10 +36,16 @@
       position:fixed;
       left:0;top:0;bottom:0;
       padding:22px;
-      background:rgba(255,255,255,0.94);
-      backdrop-filter:blur(8px);
+      
+     
       box-shadow:var(--shadow);
       overflow:auto;
+       
+      background: rgba(26, 26, 46, 0.9);
+      backdrop-filter: blur(20px);
+      border-right: 1px solid rgba(139, 69, 195, 0.3);
+      transition: all 0.3s ease;
+      box-shadow: 5px 0 20px rgba(0, 0, 0, 0.3);
     }
     .sidebar h2{
       color:var(--primary);
@@ -66,7 +72,7 @@
       max-width:calc(100% - var(--sidebar-width));
     }
     header{
-      background:rgba(255,255,255,0.95);
+      background:rgba(60, 132, 214, 0.612);
       backdrop-filter:blur(6px);
       padding:14px 18px;border-radius:10px;box-shadow:var(--shadow);
       margin-bottom:18px;position:sticky;top:12px;z-index:50;
@@ -83,7 +89,7 @@
 
     /* ---------------- Dashboard card styles ---------------- */
     .dashboard, .feature-page{
-      background:rgba(255,255,255,0.95);
+     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
       backdrop-filter:blur(6px);
       border-radius:12px;padding:22px;box-shadow:var(--shadow);margin-bottom:18px;
     }
