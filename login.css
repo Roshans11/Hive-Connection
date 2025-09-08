@@ -1,0 +1,307 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+:root {
+  --primary: #e94560;
+  --dark-bg: #141e30;
+  --dark-bg-2: #243b55;
+  --card-bg: #1d2d44;
+  --light-text: #ffcccb;
+}
+
+body {
+  background: linear-gradient(to right, var(--dark-bg), var(--dark-bg-2));
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  color: white;
+}
+
+/* Navbar */
+.navbar {
+  width: 100%;
+  padding: 10px 40px;  
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: rgba(19, 26, 37, 0.95);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  box-sizing: border-box;
+}
+.navbar a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 15px;
+}
+.navbar a:hover { color: var(--primary); }
+.navbar-left, .navbar-center, .navbar-right { display: flex; align-items: center; gap: 15px; }
+.live { background: #e94560; color: #fff; font-size: 11px; padding: 2px 6px; border-radius: 8px; margin-left: 5px; }
+.btn { padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; }
+.btn.purple { background: linear-gradient(90deg, #7b2ff7, #f107a3); color: #fff; }
+.btn.white { background: #fff; color: #000; }
+
+/* Login Box */
+.login-box {
+  background-color: #1e293b;
+  padding: 40px;
+  border-radius: 12px;
+  width: 350px;
+  text-align: center;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
+  margin-top: 60px; /* adjust for navbar */
+}
+.login-box h2 { margin-bottom: 10px; font-size: 24px; font-weight: bold; }
+.login-box p { font-size: 14px; margin-bottom: 20px; color: #94a3b8; }
+.login-box input {
+  width: 100%; padding: 12px; margin: 10px 0;
+  border: none; border-radius: 6px;
+  background-color: #0f172a; color: white; font-size: 14px;
+}
+.login-box input:focus { outline: 2px solid #2563eb; }
+.login-box button {
+  width: 100%; padding: 12px; margin-top: 15px;
+  background-color: #2563eb; border: none; border-radius: 6px;
+  color: white; font-size: 16px; cursor: pointer; transition: 0.3s;
+}
+.login-box button:hover { background-color: #1e40af; }
+.login-box .links {
+  display: flex; justify-content: space-between;
+  margin-top: 15px; font-size: 14px;
+}
+.login-box .links a { color: #3b82f6; text-decoration: none; }
+.login-box .links a:hover { text-decoration: underline; }
+.terms { margin-top: 20px; font-size: 12px; color: #94a3b8; }
+.terms a { color: #3b82f6; text-decoration: none; }
+
+/* Role selector buttons */
+.role-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+.role-buttons button {
+  flex: 1;
+  margin: 0 5px;
+  padding: 8px;
+  border: none;
+  border-radius: 6px;
+  background: #334155;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.role-buttons button.active { background: #2563eb; }
+
+.login-form { display: none; }
+.login-form.active { display: block; }
+
+
+
+
+/*for testing period*/
+
+/* General reset
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+ :root {
+      --primary: #e94560;
+      --dark-bg: #141e30;
+      --dark-bg-2: #243b55;
+      --card-bg: #1d2d44;
+      --light-text: #ffcccb;
+    }
+
+body {
+  background: linear-gradient(to right, var(--dark-bg), var(--dark-bg-2));
+  color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.navbar {
+  width: 100%;
+  padding: 10px 40px;  
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: rgba(19, 26, 37, 0.95);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  box-sizing: border-box;
+}
+.navbar-left a {
+  color: #ffff; /* white */
+}
+.navbar-left, 
+.navbar-center, 
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+
+.navbar a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 15px;
+}
+
+.navbar a:hover {
+  color: var(--primary);
+}
+
+.live {
+  background: #e94560;
+  color: #fff;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 8px;
+  margin-left: 5px;
+}
+
+/* Buttons */
+.btn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn.purple {
+  background: linear-gradient(90deg, #7b2ff7, #f107a3);
+  color: #fff;
+}
+
+.navbar .logo {
+  color: #3b82f6;
+}
+.btn.white {
+  background: #fff;
+  color: #000;
+}
+@media (max-width: 1024px) {
+  .navbar {
+    flex-wrap: wrap;  
+  }
+}
+
+/* Login Box */
+.login-box {
+  background-color: #1e293b;
+  padding: 40px;
+  border-radius: 12px;
+  width: 350px;
+  text-align: center;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
+  margin-top: 80px;
+}
+
+.login-box h2 {
+  margin-bottom: 10px;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.login-box p {
+  font-size: 14px;
+  margin-bottom: 20px;
+  color: #94a3b8;
+}
+
+.login-box input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 6px;
+  background-color: #0f172a;
+  color: white;
+  font-size: 14px;
+}
+
+.login-box input:focus {
+  outline: 2px solid #2563eb;
+}
+
+.login-box button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  background-color: #2563eb;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.login-box button:hover {
+  background-color: #1e40af;
+}
+
+.role-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+.role-buttons button {
+  flex: 1;
+  margin: 0 5px;
+  background: var(--primary);
+  border: none;
+  padding: 8px;
+  border-radius: 6px;
+  color: #fff;
+  cursor: pointer;
+}
+.role-buttons button:hover {
+  background: #c32f4f;
+}
+
+.login-form {
+  display: none;
+}
+.login-form.active {
+  display: block;
+}
+
+.links {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+  font-size: 14px;
+}
+.links a {
+  color: #3b82f6;
+  text-decoration: none;
+}
+.links a:hover {
+  text-decoration: underline;
+}
+
+.terms {
+  margin-top: 20px;
+  font-size: 12px;
+  color: #94a3b8;
+}
+.terms a {
+  color: #3b82f6;
+  text-decoration: none;
+}

@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hive Connect - Alumni Portal</title>
+
+  <!-- Fonts & Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --primary:#1a2980;
+      --secondary:#26d0ce;
+      --accent:#ff7e5f;
+      --light:#f8f9fa;
+      --dark:#0f1440;
+      --sidebar-width:220px;
+      --shadow:0 4px 15px rgba(0,0,0,0.12);
+      --transition:all .25s ease;
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0;font-family:'Poppins',sans-serif}
+    body{
+      min-height:100vh;
+      background:linear-gradient(135deg,#1a2980 0%,#26d0ce 100%);
+      display:flex;
+      color:#222;
+      overflow-x:hidden;
+    }
+
+    /* ---------------- Sidebar ---------------- */
+    .sidebar{
+      width:var(--sidebar-width);
+      position:fixed;
+      left:0;top:0;bottom:0;
+      padding:22px;
+      background:rgba(255,255,255,0.94);
+      backdrop-filter:blur(8px);
+      box-shadow:var(--shadow);
+      overflow:auto;
+    }
+    .sidebar h2{
+      color:var(--primary);
+      font-size:18px;
+      margin-bottom:14px;
+      font-weight:700;
+    }
+    .sidebar ul{list-style:none}
+    .sidebar li{margin-bottom:12px}
+    .sidebar a{
+      display:flex;align-items:center;gap:12px;
+      text-decoration:none;color:#333;padding:10px;border-radius:8px;
+      transition:var(--transition);font-weight:600;
+    }
+    .sidebar a i{width:20px;text-align:center;color:var(--primary)}
+    .sidebar a:hover{background:var(--secondary);color:white;transform:translateX(6px)}
+    .sidebar .sidebar-footer{margin-top:20px;font-size:13px;color:#555}
+
+    /* ---------------- Container & Header ---------------- */
+    .container{
+      margin-left:var(--sidebar-width);
+      flex:1;
+      padding:20px;
+      max-width:calc(100% - var(--sidebar-width));
+    }
+    header{
+      background:rgba(255,255,255,0.95);
+      backdrop-filter:blur(6px);
+      padding:14px 18px;border-radius:10px;box-shadow:var(--shadow);
+      margin-bottom:18px;position:sticky;top:12px;z-index:50;
+    }
+    .header-content{display:flex;justify-content:space-between;align-items:center}
+    .logo{display:flex;align-items:center;gap:12px}
+    .logo i{font-size:26px;background:linear-gradient(135deg,var(--primary),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .logo h1{font-size:20px;background:linear-gradient(135deg,var(--primary),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .user-actions{display:flex;align-items:center;gap:18px}
+    .notification-bell{position:relative;cursor:pointer;color:var(--primary)}
+    .notification-badge{position:absolute;top:-6px;right:-6px;background:var(--accent);color:white;border-radius:50%;width:18px;height:18px;font-size:12px;display:flex;align-items:center;justify-content:center}
+    .user-profile{display:flex;align-items:center;gap:10px}
+    .avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;background:linear-gradient(135deg,var(--primary),var(--secondary));font-weight:700}
+
+    /* ---------------- Dashboard card styles ---------------- */
+    .dashboard, .feature-page{
+      background:rgba(255,255,255,0.95);
+      backdrop-filter:blur(6px);
+      border-radius:12px;padding:22px;box-shadow:var(--shadow);margin-bottom:18px;
+    }
+
+    .welcome-banner{
+      background:linear-gradient(90deg,var(--primary),var(--secondary));
+      color:white;border-radius:10px;padding:18px;margin-bottom:18px;box-shadow:var(--shadow);
+    }
+    .welcome-banner h2{font-size:24px;margin-bottom:8px}
+    .section-title{font-size:20px;color:var(--primary);margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid rgba(0,0,0,0.04);font-weight:700}
+
+    .features-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px;margin-bottom:14px}
+    .feature-card{
+      background:white;border-radius:10px;overflow:hidden;border:1px solid rgba(0,0,0,0.04);
+      transition:var(--transition);box-shadow:0 6px 18px rgba(10,10,10,0.04)
+    }
+    .feature-card:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(10,10,10,0.08)}
+    .feature-header{padding:14px;background:linear-gradient(135deg,var(--primary),var(--secondary));color:white;display:flex;align-items:center;gap:12px}
+    .feature-header i{font-size:20px}
+    .feature-content{padding:14px}
+    .feature-content p{color:#555;margin-bottom:12px}
+    .btn{display:inline-block;padding:9px 14px;border-radius:8px;background:linear-gradient(135deg,var(--primary),var(--secondary));color:white;text-decoration:none;font-weight:600;transition:var(--transition)}
+    .btn:hover{transform:translateY(-3px);opacity:0.95}
+    .btn-outline{background:transparent;border:2px solid var(--secondary);color:var(--secondary);padding:8px 12px;border-radius:8px}
+    .btn-outline:hover{background:var(--secondary);color:#fff}
+
+    /* Admin announcements / messages */
+    .admin-messages .message{background:#fafafa;border-left:4px solid var(--secondary);padding:12px;border-radius:6px;margin-bottom:12px}
+    .message-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+    .message-sender{font-weight:700;color:var(--primary)}
+    .message-time{font-size:13px;color:#666}
+
+    /* invitations list */
+    .invitation-list{display:grid;gap:12px}
+    .invitation-item{display:flex;justify-content:space-between;align-items:center;padding:12px;border-radius:8px;border:1px solid #eee;background:#fff}
+    .invitation-actions{display:flex;gap:8px}
+
+    /* simple gallery */
+    .gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+    .gallery-grid img{width:100%;height:110px;object-fit:cover;border-radius:8px}
+
+    /* chatbot mini */
+    .chatbot-panel{max-width:420px;margin:0 auto}
+    .chatbox{position:fixed;right:18px;bottom:80px;background:white;border-radius:12px;box-shadow:0 18px 40px rgba(0,0,0,0.15);overflow:hidden;z-index:200;display:none;flex-direction:column;width:360px;max-height:60vh}
+    .chatbox.active{display:flex}
+    .chatbox .chat-header{background:linear-gradient(135deg,var(--primary),var(--secondary));color:white;padding:12px;display:flex;align-items:center;justify-content:space-between}
+    .chatbox .chat-body{padding:12px;overflow:auto;flex:1;background:#f7f9fb}
+    .chatbox .chat-footer{padding:10px;background:white;display:flex;gap:8px}
+    .chat-msg{padding:8px 12px;border-radius:12px;margin-bottom:8px;max-width:78%}
+    .chat-msg.in{background:#fff;border:1px solid #eee;align-self:flex-start}
+    .chat-msg.out{background:linear-gradient(135deg,var(--primary),var(--secondary));color:white;align-self:flex-end}
+
+    /* Floating AI Chatbot button */
+    .chatbot-btn{
+      position:fixed;right:18px;bottom:18px;background:linear-gradient(135deg,var(--primary),var(--secondary));color:white;padding:12px 16px;border-radius:30px;box-shadow:0 10px 30px rgba(0,0,0,0.18);display:flex;align-items:center;gap:10px;z-index:210;cursor:pointer
+    }
+
+    /* Footer inside container */
+    footer{margin-top:18px;padding:18px;border-radius:10px;background:rgba(255,255,255,0.95);box-shadow:var(--shadow)}
+    .footer-columns{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
+
+    /* small screens */
+    @media (max-width:900px){
+      .sidebar{position:static;width:100%;height:auto;border-radius:0;padding:12px;display:flex;overflow:auto}
+      .sidebar ul{display:flex;gap:8px}
+      .container{margin-left:0;padding:12px}
+      header{margin-top:8px}
+      .chatbox{right:12px;left:12px;width:auto}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" aria-label="Quick links">
+    <h2>Quick Links</h2>
+    <ul>
+      <li><a href="#" data-target="dashboard-page"><i class="fas fa-home"></i>Dashboard</a></li>
+      <li><a href="#" data-target="invitations-page"><i class="fas fa-envelope"></i>Invitations</a></li>
+      <li><a href="#" data-target="chat-groups-page"><i class="fas fa-comments"></i>Chat Groups</a></li>
+      <li><a href="#" data-target="rewards-page"><i class="fas fa-award"></i>Rewards</a></li>
+      <li><a href="#" data-target="gallery-page"><i class="fas fa-images"></i>Gallery</a></li>
+      <li><a href="#" data-target="chatbot-page"><i class="fas fa-robot"></i>Chatbot</a></li>
+      <li><a href="#" data-target="donations-page"><i class="fas fa-hand-holding-heart"></i>Donations</a></li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <small>Logged in as <strong>Alumni User</strong></small>
+    </div>
+  </aside>
+
+  <!-- Main area -->
+  <div class="container">
+
+    <!-- Header -->
+    <header>
+      <div class="header-content">
+        <div class="logo"><i class="fas fa-users"></i><h1>Hive Connect</h1></div>
+        <div class="user-actions">
+          <div class="notification-bell" title="Notifications">
+            <i class="fas fa-bell"></i>
+            <span class="notification-badge" id="notif-badge">3</span>
+          </div>
+          <div class="user-profile">
+            <div class="avatar" aria-hidden="true">AS</div>
+            <div><strong>Alumni User</strong><div style="font-size:12px;color:#666">Alumni • Batch 2018</div></div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- DASHBOARD PAGE -->
+    <main id="dashboard-page" class="dashboard">
+      <section class="welcome-banner">
+        <h2>Welcome to Hive Connect Alumni Portal</h2>
+        <p>Connect with your peers, explore opportunities, mentor juniors and stay updated with your alma mater.</p>
+      </section>
+
+      <h3 class="section-title">Alumni Services</h3>
+      <div class="features-grid">
+        <!-- Invitations -->
+        <div class="feature-card">
+          <div class="feature-header"><i class="fas fa-envelope-open-text"></i><h3>Invitations</h3></div>
+          <div class="feature-content">
+            <p>Manage event invites sent by students and alumni. RSVP and save the dates.</p>
+            <a href="#" class="btn" data-target="invitations-page">View Invitations</a>
+          </div>
+        </div>
+
+        <!-- Chat Groups -->
+        <div class="feature-card">
+          <div class="feature-header"><i class="fas fa-comments"></i><h3>Chat Groups</h3></div>
+          <div class="feature-content">
+            <p>Join batch groups, topic groups or mentorship channels to stay engaged.</p>
+            <a href="#" class="btn" data-target="chat-groups-page">Explore Groups</a>
+          </div>
+        </div>
+
+        <!-- Rewards -->
+        <div class="feature-card">
+          <div class="feature-header"><i class="fas fa-award"></i><h3>Rewards</h3></div>
+          <div class="feature-content">
+            <p>Earn points for participation and redeem at the Reward Corner.</p>
+            <a href="#" class="btn" data-target="rewards-page">View Rewards</a>
+          </div>
+        </div>
+
+        <!-- Gallery -->
+        <div class="feature-card">
+          <div class="feature-header"><i class="fas fa-images"></i><h3>Gallery</h3></div>
+          <div class="feature-content">
+            <p>Photos & clips from past meets — upload and relive memories.</p>
+            <a href="#" class="btn" data-target="gallery-page">Browse Gallery</a>
+          </div>
+        </div>
+
+        <!-- Chat Bot -->
+        <div class="feature-card">
+          <div class="feature-header"><i class="fas fa-robot"></i><h3>Chat Bot</h3></div>
+          <div class="feature-content">
+            <p>AI assistant for FAQs: events, donations, profile settings, and more.</p>
+            <a href="#" class="btn" data-target="chatbot-page">Chat Now</a>
+          </div>
+        </div>
+
+        <!-- Donation -->
+        <div class="feature-card">
+          <div class="feature-header"><i class="fas fa-hand-holding-heart"></i><h3>Donations</h3></div>
+          <div class="feature-content">
+            <p>Support scholarships, labs & student initiatives. See past impact reports.</p>
+            <a href="#" class="btn" data-target="donations-page">Learn More</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Admin Messages (populated via fetch / fallback) -->
+      <section class="admin-messages">
+        <h3 class="section-title">Admin Announcements</h3>
+        <div id="admin-messages-container">
+          <!-- Filled dynamically by JS -->
+        </div>
+        <div style="margin-top:12px">
+          <a href="#" id="view-all-announcements" class="btn-outline">View All Announcements</a>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- INVITATIONS PAGE -->
+    <section id="invitations-page" class="feature-page" style="display:none">
+      <div class="back-button" data-target="dashboard-page" style="cursor:pointer;margin-bottom:12px;color:var(--secondary);font-weight:600">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+      </div>
+      <h3 class="section-title">Event Invitations</h3>
+      <p>Manage invitations from students, departments, and alumni bodies.</p>
+
+      <div class="page-content" style="margin-top:12px">
+        <h4>Your Invitations</h4>
+        <div class="invitation-list" id="invitation-list">
+          <!-- sample items (could be filled from API) -->
+          <div class="invitation-item">
+            <div>
+              <h4>Annual Alumni Meet 2025</h4>
+              <div style="color:#666;font-size:13px">Date: Dec 15, 2025 | Location: Main Campus</div>
+              <div style="color:#666;font-size:13px">Invited by: Student Council</div>
+            </div>
+            <div class="invitation-actions">
+              <button class="btn accept-invite">Accept</button>
+              <button class="btn-outline decline-invite">Decline</button>
+            </div>
+          </div>
+
+          <div class="invitation-item">
+            <div>
+              <h4>Mentorship Program Kickoff</h4>
+              <div style="color:#666;font-size:13px">Date: Oct 1, 2025 | Location: Auditorium</div>
+              <div style="color:#666;font-size:13px">Invited by: Alumni Relations Office</div>
+            </div>
+            <div class="invitation-actions">
+              <button class="btn accept-invite">Accept</button>
+              <button class="btn-outline decline-invite">Decline</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHAT GROUPS PAGE -->
+    <section id="chat-groups-page" class="feature-page" style="display:none">
+      <div class="back-button" data-target="dashboard-page" style="cursor:pointer;margin-bottom:12px;color:var(--secondary);font-weight:600">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+      </div>
+      <h3 class="section-title">Chat Groups</h3>
+      <p>Join batch groups, department channels and topic-specific conversations.</p>
+
+      <div class="page-content" style="margin-top:12px">
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-header"><i class="fas fa-users"></i><h3>Batch of 2018</h3></div>
+            <div class="feature-content">
+              <p>Reconnect with your batchmates and share updates.</p>
+              <a href="#" class="btn">Join Conversation</a>
+            </div>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-header"><i class="fas fa-graduation-cap"></i><h3>Mentorship Program</h3></div>
+            <div class="feature-content">
+              <p>Support current students by sharing experience and advice.</p>
+              <a href="#" class="btn">Start Mentoring</a>
+            </div>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-header"><i class="fas fa-briefcase"></i><h3>Career Opportunities</h3></div>
+            <div class="feature-content">
+              <p>Share jobs, internships and career resources with the network.</p>
+              <a href="#" class="btn">Join Group</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- REWARDS PAGE -->
+    <section id="rewards-page" class="feature-page" style="display:none">
+      <div class="back-button" data-target="dashboard-page" style="cursor:pointer;margin-bottom:12px;color:var(--secondary);font-weight:600">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+      </div>
+      <h3 class="section-title">Reward Corner</h3>
+      <p>Track points you earned by participating and redeem rewards.</p>
+      <div style="margin-top:12px">
+        <div class="feature-card" style="padding:14px">
+          <h4>Your Points: <strong id="user-points">120</strong></h4>
+          <p style="color:#666">Redeem for campus merchandise or event passes.</p>
+          <a href="#" class="btn">Redeem Now</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- GALLERY PAGE -->
+    <section id="gallery-page" class="feature-page" style="display:none">
+      <div class="back-button" data-target="dashboard-page" style="cursor:pointer;margin-bottom:12px;color:var(--secondary);font-weight:600">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+      </div>
+      <h3 class="section-title">Gallery</h3>
+      <p>Photos and videos from alumni events. Upload your favorites!</p>
+
+      <div class="page-content" style="margin-top:12px">
+        <div class="gallery-grid" id="gallery-grid">
+          <!-- sample images -->
+          <img src="https://picsum.photos/300/200?random=10" alt="gallery">
+          <img src="https://picsum.photos/300/200?random=11" alt="gallery">
+          <img src="https://picsum.photos/300/200?random=12" alt="gallery">
+          <img src="https://picsum.photos/300/200?random=13" alt="gallery">
+          <img src="https://picsum.photos/300/200?random=14" alt="gallery">
+        </div>
+      </div>
+    </section>
+
+    <!-- DONATIONS PAGE -->
+    <section id="donations-page" class="feature-page" style="display:none">
+      <div class="back-button" data-target="dashboard-page" style="cursor:pointer;margin-bottom:12px;color:var(--secondary);font-weight:600">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+      </div>
+      <h3 class="section-title">Donation Area</h3>
+      <p>Contribute to scholarships, campus projects or student programs.</p>
+
+      <div class="page-content" style="margin-top:12px">
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <div class="feature-card" style="flex:1;min-width:240px">
+            <div class="feature-header"><i class="fas fa-hand-holding-heart"></i><h3>Scholarship Fund</h3></div>
+            <div class="feature-content">
+              <p>Support bright students — even small donations help.</p>
+              <a href="#" class="btn">Donate</a>
+            </div>
+          </div>
+          <div class="feature-card" style="flex:1;min-width:240px">
+            <div class="feature-header"><i class="fas fa-flask"></i><h3>Lab Upgrades</h3></div>
+            <div class="feature-content">
+              <p>Help improve facilities for future students.</p>
+              <a href="#" class="btn">Contribute</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHATBOT PAGE (simple bot demo) -->
+    <section id="chatbot-page" class="feature-page" style="display:none">
+      <div class="back-button" data-target="dashboard-page" style="cursor:pointer;margin-bottom:12px;color:var(--secondary);font-weight:600">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+      </div>
+      <h3 class="section-title">AI Chatbot</h3>
+      <p>Ask common questions: events, how to update profile, donation process, etc.</p>
+
+      <div class="page-content chatbot-panel" style="margin-top:12px">
+        <div style="margin-bottom:12px">
+          <button id="open-chat-min" class="btn">Open Chat Window</button>
+        </div>
+
+        <div style="background:#fff;border-radius:10px;padding:12px">
+          <p style="color:#666">Quick prompts: <a href="#" class="btn-outline quick-prompt" data-q="How to update profile?">Update profile</a> <a href="#" class="btn-outline quick-prompt" data-q="Upcoming events?">Upcoming events</a></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <div class="footer-columns">
+        <div>
+          <h4 style="color:var(--primary)">Hive Connect</h4>
+          <p style="color:#666">Connecting alumni across generations to foster lifelong relationships and support the growth of our community.</p>
+        </div>
+        <div>
+          <h4 style="color:var(--primary)">Quick Links</h4>
+          <ul style="list-style:none;color:#666">
+            <li>Home</li><li>Events</li><li>Networking</li><li>Job Board</li>
+          </ul>
+        </div>
+        <div>
+          <h4 style="color:var(--primary)">Resources</h4>
+          <ul style="list-style:none;color:#666">
+            <li>FAQ</li><li>Support</li><li>Privacy Policy</li>
+          </ul>
+        </div>
+      </div>
+      <div style="margin-top:12px;text-align:center;color:#777">&copy; 2025 Hive Connect. All rights reserved.</div>
+    </footer>
+
+  </div> <!-- /container -->
+
+  <!-- Chatbot floating button -->
+  <div class="chatbot-btn" id="floating-chatbot">
+    <i class="fas fa-robot"></i><span>AI Chatbot</span>
+  </div>
+
+  <!-- Minimal Chatbox (for chatbot page) -->
+  <div class="chatbox" id="chatbox">
+    <div class="chat-header">
+      <div style="display:flex;gap:10px;align-items:center"><i class="fas fa-robot"></i><strong>Hive AI</strong></div>
+      <div style="cursor:pointer" id="close-chat">✕</div>
+    </div>
+    <div class="chat-body" id="chat-body">
+      <div class="chat-msg in">Hi! I'm Hive AI — ask me about events, donations or profile help.</div>
+    </div>
+    <div class="chat-footer">
+      <input id="chat-input" placeholder="Type a question..." style="flex:1;padding:8px;border-radius:8px;border:1px solid #eee"/>
+      <button id="send-chat" class="btn">Send</button>
+    </div>
+  </div>
+
+  <script>
+    /**********************
+     * Page navigation
+     **********************/
+    (function(){
+      const sidebarLinks = document.querySelectorAll('.sidebar a[data-target], .feature-content .btn[data-target], .btn[data-target]');
+      const allPages = document.querySelectorAll('.dashboard, .feature-page');
+      function hideAll(){ allPages.forEach(p => p.style.display = 'none'); }
+      function showPage(id){
+        hideAll();
+        const el = document.getElementById(id);
+        if(el) el.style.display = 'block';
+        // scroll top a little for better UX
+        window.scrollTo({top:0,behavior:'smooth'});
+      }
+
+      // sidebar / feature buttons
+      sidebarLinks.forEach(a => {
+        a.addEventListener('click', function(e){
+          e.preventDefault();
+          const t = this.getAttribute('data-target');
+          if(t) showPage(t);
+        });
+      });
+
+      // Back buttons (in-page)
+      document.querySelectorAll('.back-button').forEach(b => {
+        b.addEventListener('click', function(){ const t = this.getAttribute('data-target') || 'dashboard-page'; showPage(t);});
+      });
+
+      // Quick accept/decline handlers (example)
+      document.addEventListener('click', function(e){
+        if(e.target.matches('.accept-invite')) { e.target.textContent='Accepted'; e.target.disabled=true; e.target.classList.add('btn-outline'); }
+        if(e.target.matches('.decline-invite')) { e.target.textContent='Declined'; e.target.disabled=true; }
+      });
+
+      // Default open dashboard
+      showPage('dashboard-page');
+    })();
+
+    /**********************
+     * Admin Announcements: fetch -> fallback
+     * Endpoint expected: GET /api/admin/posts
+     * JSON format example:
+     * [{ sender: "Admin Team", time: "2025-09-08", content: "..." }, ... ]
+     **********************/
+    (function(){
+      const container = document.getElementById('admin-messages-container');
+
+      function renderMessages(list){
+        container.innerHTML = '';
+        list.forEach(m => {
+          const div = document.createElement('div');
+          div.className = 'message';
+          div.innerHTML = `<div class="message-header"><span class="message-sender">${escapeHtml(m.sender)}</span><span class="message-time">${escapeHtml(m.time)}</span></div><div class="message-body" style="color:#333">${escapeHtml(m.content)}</div>`;
+          container.appendChild(div);
+        });
+      }
+
+      function escapeHtml(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+      // Try fetching from backend; if fails, use fallback
+      fetch('/api/admin/posts')
+        .then(r => { if(!r.ok) throw new Error('no'); return r.json(); })
+        .then(data => { if(Array.isArray(data) && data.length) renderMessages(data); else throw new Error('empty'); })
+        .catch(err => {
+          // fallback demo data
+          const fallback = [
+            { sender: "Admin Team", time: "September 8, 2025", content: "Welcome to the new alumni portal! Please update your profile information to help us serve you better." },
+            { sender: "Career Services", time: "September 5, 2025", content: "Virtual career fair on October 15th. Register to connect with top employers." }
+          ];
+          renderMessages(fallback);
+        });
+    })();
+
+    /**********************
+     * Notification increment simulation
+     **********************/
+    (function(){
+      const badge = document.getElementById('notif-badge');
+      setInterval(() => {
+        if(badge){
+          let n = parseInt(badge.textContent) || 0;
+          badge.textContent = n + 1;
+        }
+      }, 60000); // every 60s
+    })();
+
+    /**********************
+     * Floating Chatbot & Chatbox behavior
+     **********************/
+    (function(){
+      const floating = document.getElementById('floating-chatbot');
+      const chatbox = document.getElementById('chatbox');
+      const openMin = document.getElementById('open-chat-min');
+      const closeChat = document.getElementById('close-chat');
+      const sendBtn = document.getElementById('send-chat');
+      const chatInput = document.getElementById('chat-input');
+      const chatBody = document.getElementById('chat-body');
+
+      const openChatPageLinks = document.querySelectorAll('[data-target="chatbot-page"], #floating-chatbot');
+
+      openChatPageLinks.forEach(el => {
+        el.addEventListener('click', function(e){
+          e.preventDefault();
+          // open the chatbot page if present
+          const chatbotPage = document.getElementById('chatbot-page');
+          if(chatbotPage){
+            // show chatbot page and also open mini chat
+            document.querySelectorAll('.dashboard, .feature-page').forEach(p=>p.style.display='none');
+            chatbotPage.style.display='block';
+            setTimeout(()=>{ chatbox.classList.add('active'); }, 300);
+            window.scrollTo({top:0,behavior:'smooth'});
+          }
+        });
+      });
+
+      openMin && openMin.addEventListener('click', () => { chatbox.classList.add('active'); });
+      floating.addEventListener('click', () => { chatbox.classList.add('active'); });
+      closeChat && closeChat.addEventListener('click', () => { chatbox.classList.remove('active'); });
+
+      function appendMsg(text, type='in'){
+        const d = document.createElement('div'); d.className = 'chat-msg ' + (type==='out' ? 'out' : 'in');
+        d.textContent = text; chatBody.appendChild(d); chatBody.scrollTop = chatBody.scrollHeight;
+      }
+
+      sendBtn.addEventListener('click', () => {
+        const val = chatInput.value.trim(); if(!val) return;
+        appendMsg(val,'out'); chatInput.value='';
+        // naive simulated reply
+        setTimeout(()=> {
+          appendMsg("Got it — here's a quick answer (demo): we have an event on Oct 15. For details, check Events page.", 'in');
+        }, 700);
+      });
+
+      // quick prompts on chatbot page
+      document.querySelectorAll('.quick-prompt').forEach(btn=>{
+        btn.addEventListener('click', (e)=>{
+          e.preventDefault();
+          const q = btn.getAttribute('data-q');
+          appendMsg(q,'out');
+          setTimeout(()=>appendMsg("Demo reply: To update profile click your avatar > Edit Profile. For event registration use the Invitations section."),900);
+        });
+      });
+    })();
+
+    /**********************
+     * Small helpers & notes
+     **********************/
+    // Placeholders: gallery, rewards, invitations etc. are sample UI — replace with API calls of your backend.
+    // See the small "backend guide" below for integration ideas.
+  </script>
+</body>
+</html>

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Join — Hive Connection</title>
+
+  <!-- Fonts (clean modern fonts) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+
+  <!-- global (optional) -->
+  <link rel="stylesheet" href="home.css">
+
+  <!-- page specific -->
+  <link rel="stylesheet" href="joinus.css">
+</head>
+<body>
+  <!-- NAV (copy from your site to keep consistent) -->
+      <div class="navbar">
+  <div class="navbar-left">
+    Hive Connection
+  </div>
+
+
+  <div class="navbar-center">
+    <a href="gallery.html">Gallery</a>
+    <a href="notice.html">Notice</a>
+    <a href="our team.html">Our Team</a>
+    <a href="joinus.html">Join Us</a>
+    <a href="upcoming.html">upcpmming <span class="live">LIVE</span></a>
+  </div>
+
+  <div class="navbar-right">
+ 
+  <button class="btn white" onclick="window.location.href='login.html'">Login</button>
+  <button class="btn purple" onclick="window.location.href='home.html'">home</button>
+</div>
+
+</div>
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-inner">
+      <h1 class="hero-title">
+        <span class="gradient-text">Join the Alumni Network</span>
+      </h1>
+      <p class="hero-sub">
+        Be part of a digital platform that connects alumni, strengthens networking, and drives engagement.
+      </p>
+      <div class="hero-cta">
+        <a href="#apply" class="btn-cta">Join Now</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <!-- optional image/illustration placeholder -->
+      <div class="visual-card">Hive Connection</div>
+    </div>
+  </header>
+
+  <!-- OUR MISSION -->
+  <section class="section mission">
+    <h2 class="section-title">Our Mission</h2>
+    <p class="section-lead">
+      To build a centralized, secure alumni database that empowers lifelong engagement — connecting alumni to opportunities,
+      mentorship, and meaningful campus community initiatives.
+    </p>
+  </section>
+
+  <!-- WHAT WE DO (3 cards) -->
+  <section class="section cards-grid">
+    <h2 class="section-title">What We Do</h2>
+    <div class="cards">
+      <article class="card">
+        <h3>Centralized Alumni Data</h3>
+        <p>Securely store and manage alumni records, searchable by batch, program, and enrollment number.</p>
+      </article>
+
+      <article class="card">
+        <h3>Networking & Mentorship</h3>
+        <p>Connect students and alumni for mentoring, career guidance and industry networking.</p>
+      </article>
+
+      <article class="card">
+        <h3>Events & Engagement</h3>
+        <p>Organize reunions, webinars and career events — keep everyone updated and involved.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- WHY JOIN US (4 cards) -->
+  <section class="section cards-grid">
+    <h2 class="section-title">Why Join Us</h2>
+    <div class="cards why-cards">
+      <article class="card small">Build Connections</article>
+      <article class="card small">Access Opportunities</article>
+      <article class="card small">Give Back to Juniors</article>
+      <article class="card small">Stay Updated</article>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section cta-section">
+    <div class="cta-inner">
+      <h2 class="cta-title">Ready to Reconnect?</h2>
+      <p class="cta-lead">Apply now to join the Hive Connection alumni network and start reconnecting today.</p>
+      <a href="#apply" class="btn-cta btn-apply">Apply Now</a>
+    </div>
+  </section>
+
+  <!-- APPLY FORM (target for #apply anchor) -->
+  <section id="apply" class="section apply-section">
+    <div class="apply-card">
+      <h2>Apply to Join</h2>
+      <form id="joinForm" class="join-form" onsubmit="submitForm(event)">
+        <div class="row">
+          <div class="col">
+            <label for="name">Full name *</label>
+            <input id="name" name="name" type="text" placeholder="Your full name" required />
+          </div>
+          <div class="col">
+            <label for="enrollment">Enrollment number *</label>
+            <input id="enrollment" name="enrollment" type="text" placeholder="e.g. 20XXBCS123" required />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" placeholder="you@example.edu" />
+          </div>
+          <div class="col">
+            <label for="dept">Department</label>
+            <select id="dept" name="dept">
+              <option value="">Select Department</option>
+              <option>Computer Science</option>
+              <option>Electronics</option>
+              <option>Mechanical</option>
+              <option>Civil</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <label for="year">Graduation Year</label>
+            <input id="year" name="year" type="number" min="1950" max="2099" placeholder="2024" />
+          </div>
+          <div class="col align-end">
+            <button type="submit" class="btn-cta submit">Submit Application</button>
+          </div>
+        </div>
+      </form>
+
+      <p class="hint">This prototype stores entries locally for testing. We will connect it to Google Sheets / backend later.</p>
+    </div>
+  </section>
+
+  <!-- toast -->
+  <div id="toast" class="toast" aria-live="polite"></div>
+
+  <script>
+    // Save to localStorage prototype
+    function submitForm(e) {
+      e.preventDefault();
+      const name = document.getElementById('name').value.trim();
+      const enrollment = document.getElementById('enrollment').value.trim();
+      if (!name || !enrollment) { showToast('Please fill required fields', true); return; }
+
+      const email = document.getElementById('email').value.trim();
+      const dept = document.getElementById('dept').value;
+      const year = document.getElementById('year').value;
+
+      const key = 'hive_join_submissions';
+      const arr = JSON.parse(localStorage.getItem(key) || '[]');
+      arr.push({ timestamp: new Date().toISOString(), name, enrollment, email, dept, year });
+      localStorage.setItem(key, JSON.stringify(arr));
+
+      showToast('Application submitted ✅');
+      document.getElementById('joinForm').reset();
+      // scroll to top of form
+      document.getElementById('apply').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // toast helper
+    function showToast(msg, isError = false) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.style.background = isError ? 'rgba(220,60,60,0.95)' : 'linear-gradient(90deg,#11998e,#38ef7d)';
+      t.classList.add('show');
+      setTimeout(()=> t.classList.remove('show'), 2500);
+    }
+  </script>
+</body>
+</html>
