@@ -12,61 +12,39 @@
   <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js"></script>
 </head>
 <body>
-  <!-- Navbar -->
-  <div class="navbar">
-    <div class="navbar-left">Hive Connection</div>
-    <div class="navbar-center">
-      <a href="gallery.html">Gallery</a>
-      <a href="notice.html">Notice</a>
-      <a href="our team.html">Our Team</a>
-      <a href="joinus.html">Join Us</a>
-      <a href="upcoming.html">Upcoming <span class="live">LIVE</span></a>
-    </div>
-    <div class="navbar-right">
-      <button class="btn white" onclick="window.location.href='login.html'">Login</button>
-      <button class="btn purple" onclick="window.location.href='home.html'">Home</button>
-    </div>
-  </div>
-
-  <!-- Signup Box -->
   <div class="login-box">
     <h2>Create Account</h2>
-    <p>Join Hive Connection today</p>
+    <p>Select your role and sign up</p>
 
     <!-- Role Buttons -->
     <div class="role-buttons">
-      <button onclick="showForm('alumni')">Alumni</button>
-      <button onclick="showForm('student')">Student</button>
-      <button onclick="showForm('admin')">Admin</button>
+      <button onclick="showForm('alumni-signup')">Alumni</button>
+      <button onclick="showForm('student-signup')">Student</button>
+      <button onclick="showForm('admin-signup')">Admin</button>
     </div>
 
     <!-- Alumni Signup -->
-    <form id="alumni" class="signup-form">
+    <form id="alumni-signup" class="login-form">
       <input type="email" placeholder="Alumni Email" required>
       <input type="password" placeholder="Password" required>
       <button type="submit">Signup as Alumni</button>
     </form>
 
     <!-- Student Signup -->
-    <form id="student" class="signup-form">
+    <form id="student-signup" class="login-form">
       <input type="email" placeholder="Student Email" required>
       <input type="password" placeholder="Password" required>
       <button type="submit">Signup as Student</button>
     </form>
 
     <!-- Admin Signup -->
-    <form id="admin" class="signup-form">
+    <form id="admin-signup" class="login-form">
       <input type="email" placeholder="Admin Email" required>
       <input type="password" placeholder="Password" required>
       <button type="submit">Signup as Admin</button>
     </form>
-
-    <div class="links">
-      <a href="login.html">Already have an account? Login</a>
-    </div>
   </div>
 
-  <!-- Firebase Signup Logic -->
-  <script src="signup.js"></script>
+  <script src="login.js"></script>
 </body>
 </html>
