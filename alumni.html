@@ -130,17 +130,16 @@
       <p>Alumni Network</p>
     </div>
 
-    <nav class="nav-menu" aria-label="Sidebar menu">
-      <div class="nav-item"><a href="#" class="nav-link active" data-target="dashboard"><i class="fas fa-chart-line"></i> Dashboard</a></div>
-      <div class="nav-item"><a href="#" class="nav-link" data-target="profile"><i class="fas fa-user"></i> Profile</a></div>
-      <div class="nav-item"><a href="#" class="nav-link" data-target="directory"><i class="fas fa-users"></i> Alumni Directory <span class="badge">1.2k</span></a></div>
-      <div class="nav-item"><a href="#" class="nav-link" data-target="events"><i class="fas fa-calendar-alt"></i> Events <span class="badge">5</span></a></div>
-      <div class="nav-item"><a href="#" class="nav-link" data-target="careers"><i class="fas fa-briefcase"></i> Careers</a></div>
-      <div class="nav-item"><a href="#" class="nav-link" data-target="chatgroups"><i class="fas fa-comments"></i> Chat Groups</a></div>
-      <div class="nav-item"><a href="#" class="nav-link" data-target="donations"><i class="fas fa-hand-holding-heart"></i> Donations</a></div>
-      <div class="nav-item"><a href="#" class="nav-link" data-target="analytics"><i class="fas fa-chart-pie"></i> Analytics</a></div>
-      <div class="nav-item"><a href="#" class="nav-link" data-target="settings"><i class="fas fa-cog"></i> Settings</a></div>
-    </nav>
+   <!-- Sidebar -->
+<nav class="nav-menu" aria-label="Sidebar menu">
+  <div class="nav-item"><a href="#" class="nav-link active" data-target="dashboard"><i class="fas fa-chart-line"></i> Dashboard</a></div>
+  <div class="nav-item"><a href="#" class="nav-link" data-target="profile"><i class="fas fa-user"></i> Profile</a></div>
+  <div class="nav-item"><a href="#" class="nav-link" data-target="events"><i class="fas fa-calendar-alt"></i> Events <span class="badge">5</span></a></div>
+  <div class="nav-item"><a href="#" class="nav-link" data-target="careers"><i class="fas fa-briefcase"></i> Careers</a></div>
+  <div class="nav-item"><a href="#" class="nav-link" data-target="chatgroups"><i class="fas fa-comments"></i> Chat Groups</a></div>
+  <div class="nav-item"><a href="#" class="nav-link" data-target="donations"><i class="fas fa-hand-holding-heart"></i> Donations</a></div>
+  <div class="nav-item"><a href="#" class="nav-link" data-target="settings"><i class="fas fa-cog"></i> Settings</a></div>
+</nav>
 
     <div style="margin-top:auto;padding:10px;font-size:0.9rem;color:rgba(255,255,255,0.7)">
       Logged in as <strong>Alumni User</strong>
@@ -151,13 +150,18 @@
   <main class="main-content">
 
     <!-- HEADER -->
-    <div class="header">
-      <div><h1>Admin Dashboard</h1><div style="color:rgba(255,255,255,0.6)">Manage alumni, events, donations and communication</div></div>
-      <div style="display:flex;align-items:center;gap:12px">
-        <div class="search-box"><i class="fas fa-search"></i><input id="globalSearch" placeholder="Search..."></div>
-        <button class="btn" id="openAddAlumniBtn"><i class="fas fa-plus"></i>&nbsp;Add Alumni</button>
-      </div>
-    </div>
+   <!-- HEADER -->
+<div class="header">
+  <div>
+    <h1>Alumni Dashboard</h1>
+    <div style="color:rgba(255,255,255,0.6)">Manage events, donations and communication</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px">
+    <div class="search-box"><i class="fas fa-search"></i><input id="globalSearch" placeholder="Search..."></div>
+    <!-- Removed "Add Alumni" button since directory is gone -->
+  </div>
+</div>
+
 
     <!-- Dashboard Page -->
     <section id="dashboard" class="page active">
@@ -242,27 +246,7 @@
           </div>
         </div>
       </div>
-    </section>
-
-    <!-- DIRECTORY PAGE -->
-    <section id="directory" class="page" style="display:none">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <div class="section-title">Alumni Directory</div>
-        <div>
-          <input id="dirSearch" placeholder="Search by name, company or location" style="padding:8px 12px;border-radius:10px;background:rgba(255,255,255,0.03);color:#fff;border:1px solid rgba(139,69,195,0.08)">
-          <button class="btn" onclick="openAddAlumniModal()">Add Alumni</button>
-        </div>
-      </div>
-
-      <div style="overflow:auto">
-        <table class="data-table" id="alumniTable">
-          <thead><tr><th>Name</th><th>Batch</th><th>Department</th><th>Company</th><th>Location</th><th>Status</th><th>Actions</th></tr></thead>
-          <tbody>
-            <!-- filled by JS -->
-          </tbody>
-        </table>
-      </div>
-    </section>
+   
 
     <!-- EVENTS PAGE -->
     <section id="events" class="page" style="display:none">
@@ -343,23 +327,7 @@
       </div>
     </section>
 
-    <!-- ANALYTICS PAGE -->
-    <section id="analytics" class="page" style="display:none">
-      <div class="section-title">Analytics & Insights</div>
-      <div style="display:grid;grid-template-columns:1fr 360px;gap:16px">
-        <div class="chart-container">
-          <canvas id="activityChart" height="220"></canvas>
-        </div>
-        <aside class="feature-card">
-          <div class="feature-header"><i class="fas fa-filter"></i> Filters</div>
-          <div class="feature-content">
-            <label>Time Range</label>
-            <select id="analyticsRange"><option>Last 6 months</option><option>Last 12 months</option><option>All time</option></select>
-            <div style="margin-top:10px"><button class="btn" onclick="updateAnalytics()">Apply</button></div>
-          </div>
-        </aside>
-      </div>
-    </section>
+   
 
     <!-- SETTINGS PAGE -->
     <section id="settings" class="page" style="display:none">
