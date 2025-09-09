@@ -1,759 +1,221 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Hive Connect — Alumni Portal (Upgraded)</title>
-
-  <!-- icons & font -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-  <style>
-    :root{
-      --bg-1: #0f1330;
-      --bg-2: #16213e;
-      --accent-1: #e91e63;
-      --accent-2: #8b45c3;
-      --glass: rgba(255,255,255,0.04);
-      --muted: rgba(255,255,255,0.7);
-      --card-shadow: 0 10px 30px rgba(6,8,20,0.6);
-      --glass-border: rgba(139,69,195,0.14);
-      --radius: 14px;
-      --sidebar-w: 260px;
-      --transition: 250ms cubic-bezier(.2,.9,.3,1);
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family:'Poppins',system-ui,Segoe UI,Roboto,Arial;
-      background: linear-gradient(135deg,var(--bg-1) 0%, var(--bg-2) 50%, #0f3460 100%);
-      color: #fff;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-      overflow-x:hidden;
-    }
-
-    /* subtle background blob */
-    .bg-blob{
-      position:fixed;right:-120px;top:-120px;width:520px;height:520px;border-radius:50%;
-      background: radial-gradient(circle at 30% 30%, rgba(233,30,99,0.12), transparent 30%), linear-gradient(135deg,var(--accent-1),var(--accent-2));
-      filter:blur(40px);opacity:0.55;z-index:0;pointer-events:none;
-    }
-
-    /* layout */
-    .sidebar{
-      position:fixed;left:18px;top:18px;bottom:18px;width:var(--sidebar-w);
-      border-radius:var(--radius);padding:18px;z-index:20;
-      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
-      border:1px solid var(--glass-border);backdrop-filter: blur(8px);
-      box-shadow: 0 12px 30px rgba(8,10,30,0.6);
-      display:flex;flex-direction:column;justify-content:space-between;
-    }
-    .brand{display:flex;align-items:center;gap:10px}
-    .brand .logo-icon{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--accent-1),var(--accent-2));display:flex;align-items:center;justify-content:center;font-weight:800;color:white}
-    .brand h2{font-size:18px;margin:0;color:var(--accent-1);letter-spacing:0.2px}
-    .sidebar nav{margin-top:18px;flex:1;overflow:auto;padding-right:6px}
-    .nav-item{margin-bottom:10px}
-    .nav-link{
-      display:flex;align-items:center;gap:12px;padding:10px;border-radius:10px;color:rgba(255,255,255,0.9);text-decoration:none;
-      transition:var(--transition);cursor:pointer;font-weight:600;font-size:14px;
-    }
-    .nav-link i{width:26px;text-align:center;color:var(--accent-1)}
-    .nav-link:hover{transform:translateX(6px);background:linear-gradient(90deg, rgba(139,69,195,0.08), rgba(233,30,99,0.06))}
-    .nav-link.active{background:linear-gradient(90deg, rgba(139,69,195,0.14), rgba(233,30,99,0.08));box-shadow:0 12px 30px rgba(139,69,195,0.06)}
-
-    .sidebar .meta{font-size:13px;color:var(--muted);margin-top:12px}
-    .sidebar .small{font-size:12px;color:rgba(255,255,255,0.6);margin-top:8px}
-
-    /* main content */
-    .main{
-      margin-left:calc(var(--sidebar-w) + 36px);padding:28px;position:relative;z-index:1;
-    }
-    header.header{
-      display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;gap:12px;
-    }
-    .search {
-      display:flex;align-items:center;gap:12px;background:var(--glass);padding:8px 12px;border-radius:999px;border:1px solid var(--glass-border);
-      width:520px;max-width:100%;
-    }
-    .search input{background:transparent;border:none;color: #fff;outline:none;width:100%;}
-    .top-actions{display:flex;gap:12px;align-items:center}
-    .top-actions .icon{background:rgba(255,255,255,0.02);padding:10px;border-radius:10px;cursor:pointer}
-    .profile-compact{display:flex;align-items:center;gap:10px}
-    .avatar{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--accent-1),var(--accent-2));display:flex;align-items:center;justify-content:center;font-weight:700}
-
-    /* page sections */
-    .page{display:none;opacity:0;transform:translateY(6px);transition:opacity var(--transition), transform var(--transition);min-height:60vh}
-    .page.active{display:block;opacity:1;transform:none}
-
-    /* cards + grids */
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-bottom:18px}
-    .card{
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      border-radius:12px;padding:16px;border:1px solid var(--glass-border);box-shadow:var(--card-shadow);
-      transition: transform var(--transition), box-shadow var(--transition);
-    }
-    .card:hover{transform:translateY(-8px);box-shadow:0 20px 60px rgba(6,8,20,0.66)}
-    .card h3{margin:0 0 8px 0;color:var(--accent-1);font-size:18px}
-    .muted{color:rgba(255,255,255,0.7);font-size:13px}
-
-    .big-stats{display:flex;gap:12px;align-items:stretch}
-    .stat{
-      flex:1;padding:18px;border-radius:12px;background:linear-gradient(90deg, rgba(233,30,99,0.06), rgba(139,69,195,0.04));display:flex;flex-direction:column;gap:6px;
-    }
-    .stat .num{font-size:22px;font-weight:700;color:#fff}
-    .stat .label{font-size:13px;color:var(--muted)}
-
-    /* invitations list */
-    .invitation-item{display:flex;justify-content:space-between;align-items:center;padding:12px;border-radius:10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.02)}
-    .invitation-actions{display:flex;gap:10px}
-    .btn{background:linear-gradient(135deg,var(--accent-1),var(--accent-2));color:white;padding:8px 12px;border-radius:10px;border:none;cursor:pointer;font-weight:700}
-    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
-    .btn:active{transform:scale(.99)}
-
-    /* gallery */
-    .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}
-    .gallery img{width:100%;height:120px;object-fit:cover;border-radius:10px;cursor:pointer;border:1px solid rgba(255,255,255,0.03)}
-    .lightbox{position:fixed;left:0;top:0;right:0;bottom:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:9999;opacity:0;pointer-events:none;transition:all 180ms ease}
-    .lightbox.open{opacity:1;pointer-events:auto}
-    .lightbox img{max-width:90%;max-height:80%;border-radius:12px;box-shadow:0 30px 80px rgba(0,0,0,0.7)}
-
-    /* donations */
-    .progress{height:12px;background:rgba(255,255,255,0.04);border-radius:999px;overflow:hidden}
-    .progress > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent-1),var(--accent-2));width:40%;transition:width 600ms ease}
-
-    /* chatbox */
-    .chat-fab{position:fixed;right:26px;bottom:26px;background:linear-gradient(135deg,var(--accent-1),var(--accent-2));color:white;padding:14px;border-radius:999px;box-shadow:0 18px 50px rgba(0,0,0,0.6);z-index:999;cursor:pointer;display:flex;align-items:center;gap:10px}
-    .chat-window{position:fixed;right:26px;bottom:96px;width:360px;height:520px;border-radius:12px;background:linear-gradient(180deg,#0b0e22, #0f1a32);box-shadow:0 30px 80px rgba(0,0,0,0.7);display:flex;flex-direction:column;overflow:hidden;z-index:999}
-    .chat-window .header{padding:12px;background:linear-gradient(90deg,var(--accent-1),var(--accent-2));display:flex;align-items:center;justify-content:space-between}
-    .chat-window .body{padding:12px;flex:1;overflow:auto;background:linear-gradient(180deg,rgba(255,255,255,0.01),transparent)}
-    .chat-msg{padding:8px 12px;border-radius:12px;margin:8px 0;max-width:78%}
-    .chat-msg.in{background:rgba(255,255,255,0.03);align-self:flex-start}
-    .chat-msg.out{background:linear-gradient(90deg,var(--accent-1),var(--accent-2));color:#fff;align-self:flex-end}
-    .chat-window .footer{padding:10px;display:flex;gap:8px;background:linear-gradient(180deg,transparent, rgba(255,255,255,0.02))}
-
-    /* footer */
-    footer.site-footer{margin-top:20px;padding:16px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.02);text-align:center;color:var(--muted)}
-
-    /* responsive */
-    @media (max-width:980px){
-      .sidebar{left:12px;right:12px;top:12px;width:auto;display:flex;overflow:auto}
-      .main{margin-left:0;padding:18px}
-      .search{width:100%}
-      .chat-window{right:12px;left:12px}
-    }
-  </style>
+  <title>Hive Connection — Student Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-  <div class="bg-blob" aria-hidden="true"></div>
-
-  <!-- Sidebar -->
-  <aside class="sidebar" role="navigation" aria-label="Main navigation">
-    <div>
-      <div class="brand">
-        <div class="logo-icon"><i class="fas fa-hexagon"></i></div>
-        <div>
-          <h2>Hive Connect</h2>
-          <div class="small">Alumni Portal</div>
-        </div>
+  <aside class="sidebar">
+    <div class="brand">
+      <!-- simple inline SVG logo -->
+      <svg width="42" height="42" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="#F9A826"/><path d="M8 12h8M12 8v8" stroke="#0B1E3F" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <div class="brand-text">
+        <div class="title">Hive Connection</div>
+        <div class="subtitle">Student Portal</div>
       </div>
-
-      <nav aria-label="Primary">
-        <div class="nav-item"><div class="nav-link active" data-page="dashboard"> <i class="fas fa-home"></i> Dashboard</div></div>
-        <div class="nav-item"><div class="nav-link" data-page="invitations"> <i class="fas fa-envelope"></i> Invitations</div></div>
-        <div class="nav-item"><div class="nav-link" data-page="chatgroups"> <i class="fas fa-comments"></i> Chat Groups</div></div>
-        <div class="nav-item"><div class="nav-link" data-page="rewards"> <i class="fas fa-award"></i> Rewards</div></div>
-        <div class="nav-item"><div class="nav-link" data-page="gallery"> <i class="fas fa-images"></i> Gallery</div></div>
-        <div class="nav-item"><div class="nav-link" data-page="donations"> <i class="fas fa-hand-holding-heart"></i> Donations</div></div>
-        <div class="nav-item"><div class="nav-link" data-page="chatbot"> <i class="fas fa-robot"></i> Chatbot</div></div>
-      </nav>
     </div>
 
-    <div>
-      <div class="meta">Logged in as <strong id="alName">Alumni User</strong></div>
-      <div class="small">Batch <span id="alBatch">2018</span> • Member since 2016</div>
+    <nav class="nav">
+      <a class="nav-link active" data-section="dashboard">Dashboard</a>
+      <a class="nav-link" data-section="alumni">Alumni Network</a>
+      <a class="nav-link" data-section="internships">Internships</a>
+      <a class="nav-link" data-section="blogs">Blogs & Webinars</a>
+      <a class="nav-link" data-section="skills">Skills & Projects</a>
+      <a class="nav-link" data-section="sections">Sections</a>
+      <a class="nav-link" data-section="gallery">Gallery</a>
+      <a class="nav-link" data-section="forum">Forum</a>
+      <a class="nav-link" data-section="chat">Chat Rooms</a>
+      <a class="nav-link" data-section="help">Quick Help</a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <small>Logged in as: <strong>Student</strong></small>
     </div>
   </aside>
 
-  <!-- Main -->
-  <div class="main" role="main">
-    <header class="header">
-      <div style="display:flex;gap:12px;align-items:center;">
-        <div class="search" role="search">
-          <i class="fas fa-search"></i>
-          <input id="global-search" placeholder="Search invites, events, gallery..." aria-label="Search"/>
-        </div>
-        <div style="margin-left:12px" class="muted">Welcome back — <strong id="welcomeName">Alumni User</strong></div>
-      </div>
-
-      <div class="top-actions">
-        <div class="icon" id="notif-btn" title="Notifications"><i class="fas fa-bell"></i><span id="notif-count" style="margin-left:6px;font-size:13px;color:var(--muted)">3</span></div>
-        <div class="profile-compact">
-          <div class="avatar" id="navAvatar">AU</div>
+  <main class="main">
+    <header class="topbar">
+      <h1 id="page-title">Dashboard</h1>
+      <div class="top-controls">
+        <div class="profile">
+          <!-- avatar placeholder -->
+          <svg width="36" height="36" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.2" fill="#eee"/><path d="M4 20c0-3.3 4-6 8-6s8 2.7 8 6" fill="#eee"/></svg>
+          <span class="name">Student Name</span>
         </div>
       </div>
     </header>
 
-    <!-- DASHBOARD -->
-    <section id="dashboard" class="page active" aria-labelledby="dashboard-title">
-      <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
-          <div>
-            <h3 style="margin:0">Welcome to Hive Connect</h3>
-            <div class="muted">Your hub for networking, mentoring, and giving back.</div>
-          </div>
-          <div style="display:flex;gap:12px;align-items:center">
-            <button class="btn" id="create-invite">Create Invitation</button>
-            <button class="btn ghost" id="open-donate">Donate</button>
-          </div>
-        </div>
-      </div>
-
+    <!-- ---------- Sections (only one visible) ---------- -->
+    <section id="dashboard" class="section visible">
       <div class="grid">
-        <div class="card big-stats">
-          <div class="stat">
-            <div class="muted">Alumni</div>
-            <div class="num" id="stat-alumni">1,200</div>
-            <div class="muted">Active members</div>
-          </div>
-          <div class="stat">
-            <div class="muted">Events</div>
-            <div class="num" id="stat-events">18</div>
-            <div class="muted">Upcoming & past</div>
-          </div>
-          <div class="stat">
-            <div class="muted">Donations</div>
-            <div class="num" id="stat-donations">₹ 2,40,000</div>
-            <div class="muted">Raised</div>
-          </div>
+        <div class="card announcements">
+          <div class="card-head">📣 Announcements</div>
+          <ul id="announcements-list"></ul>
         </div>
 
+        <div class="card events">
+          <div class="card-head">📅 Upcoming Events</div>
+          <div id="events-list"></div>
+        </div>
+
+        <div class="card mentorships">
+          <div class="card-head">🤝 Mentorships</div>
+          <div id="mentorships-list"></div>
+        </div>
+
+        <div class="card rsvps">
+          <div class="card-head">Your RSVPs</div>
+          <div id="my-rsvps">No RSVPs yet</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="alumni" class="section">
+      <div class="section-head">
+        <h2>Alumni Network</h2>
+        <p>Search and connect with alumni by branch, year or skill.</p>
+      </div>
+
+      <div class="filters">
+        <select id="filter-branch"><option value="">All Branches</option></select>
+        <select id="filter-year"><option value="">All Years</option></select>
+        <input id="filter-skill" placeholder="Filter by skill (e.g. React)" />
+        <button id="btn-filter">Search</button>
+        <button id="btn-clear-filters" class="btn-link">Clear</button>
+      </div>
+
+      <div id="alumni-results" class="cards-grid"></div>
+    </section>
+
+    <section id="internships" class="section">
+      <div class="section-head">
+        <h2>Internships & Placements</h2>
+        <p>Opportunities posted by alumni.</p>
+      </div>
+
+      <div id="internship-list" class="cards-grid"></div>
+
+      <hr />
+      <div class="card small">
+        <h3>My Applications</h3>
+        <div id="my-applications">No applications yet</div>
+      </div>
+    </section>
+
+    <section id="blogs" class="section">
+      <div class="section-head">
+        <h2>Blogs & Webinars</h2>
+        <p>Read alumni blogs or register for webinars.</p>
+      </div>
+
+      <div id="blog-list" class="cards-grid"></div>
+      <div id="webinar-list" class="cards-grid"></div>
+    </section>
+
+    <section id="skills" class="section">
+      <div class="section-head"><h2>Skills & Projects</h2></div>
+      <div class="card small">
+        <h3>Add a Project</h3>
+        <form id="project-form">
+          <input id="project-title" placeholder="Project Title" required />
+          <input id="project-tech" placeholder="Technologies (comma separated)" />
+          <textarea id="project-desc" placeholder="Short description"></textarea>
+          <div class="form-row">
+            <button type="submit">Add Project</button>
+            <button type="button" id="project-clear" class="btn-link">Clear</button>
+          </div>
+        </form>
+      </div>
+
+      <div id="project-list" class="cards-grid"></div>
+    </section>
+
+    <section id="sections" class="section">
+      <div class="section-head"><h2>Sections (Videos)</h2><p>Past recordings and upcoming sessions</p></div>
+      <div class="cards-grid">
         <div class="card">
-          <h3>Quick Actions</h3>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
-            <button class="btn" data-page="invitations">View Invitations</button>
-            <button class="btn" data-page="chatgroups">Open Groups</button>
-            <button class="btn ghost" data-page="gallery">Upload Photos</button>
-          </div>
+          <h4>Past Recordings</h4>
+          <div id="past-videos"></div>
         </div>
-
         <div class="card">
-          <h3>Admin Announcements</h3>
-          <div id="announcements" style="margin-top:12px"></div>
-          <div style="margin-top:8px"><button class="btn ghost" id="all-announcements">All Announcements</button></div>
+          <h4>Upcoming Sessions</h4>
+          <div id="upcoming-sessions"></div>
         </div>
       </div>
     </section>
 
-    <!-- INVITATIONS -->
-    <section id="invitations" class="page" aria-hidden="true">
-      <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div>
-            <h3>Event Invitations</h3>
-            <div class="muted">Accept or decline invites, add to calendar or message organizer.</div>
-          </div>
-          <div><button class="btn" id="new-invite">New Invite</button></div>
-        </div>
-      </div>
-
-      <div class="card" style="margin-top:12px">
-        <div id="invitation-list" style="display:flex;flex-direction:column;gap:10px"></div>
-      </div>
+    <section id="gallery" class="section">
+      <div class="section-head"><h2>Gallery</h2></div>
+      <div id="gallery-grid" class="gallery-grid"></div>
     </section>
 
-    <!-- CHAT GROUPS -->
-    <section id="chatgroups" class="page" aria-hidden="true">
-      <div class="card">
-        <h3>Chat Groups</h3>
-        <div class="muted">Join your batch, mentoring or career groups. Conversations are demo only.</div>
-        <div style="margin-top:12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
-          <div class="card" style="padding:12px">
-            <h4 style="margin:0">Batch of 2018</h4>
-            <div class="muted">Reconnect with your batchmates.</div>
-            <div style="margin-top:10px"><button class="btn">Join Group</button></div>
+    <section id="forum" class="section">
+      <div class="section-head"><h2>Discussion Forum</h2></div>
+      <div class="card small">
+        <form id="thread-form">
+          <input id="thread-title" placeholder="Thread title" required />
+          <textarea id="thread-body" placeholder="Ask something..." required></textarea>
+          <div class="form-row">
+            <button type="submit">Post Thread</button>
+            <button type="button" id="clear-threads" class="btn-link">Clear All (admin)</button>
           </div>
-          <div class="card" style="padding:12px">
-            <h4 style="margin:0">Mentorship</h4>
-            <div class="muted">Help students navigate careers.</div>
-            <div style="margin-top:10px"><button class="btn">Open Mentorship</button></div>
-          </div>
-          <div class="card" style="padding:12px">
-            <h4 style="margin:0">Career Opportunities</h4>
-            <div class="muted">Share roles & internships.</div>
-            <div style="margin-top:10px"><button class="btn">Share Job</button></div>
-          </div>
-        </div>
+        </form>
       </div>
+      <div id="threads-list" class="cards-grid"></div>
     </section>
 
-    <!-- REWARDS -->
-    <section id="rewards" class="page" aria-hidden="true">
-      <div class="card">
-        <h3>Reward Corner</h3>
-        <div class="muted">Points for mentoring, donating, event participation.</div>
-        <div style="margin-top:12px;display:flex;gap:12px;align-items:center">
-          <div style="flex:1">
-            <div class="muted">Your Points</div>
-            <div style="font-weight:800;font-size:28px" id="points">320</div>
-            <div class="muted">Redeem for passes or merchandise</div>
-          </div>
-          <div><button class="btn">Redeem</button></div>
+    <section id="chat" class="section">
+      <div class="section-head"><h2>Chat Rooms</h2></div>
+
+      <div class="chat-controls">
+        <select id="chat-mode">
+          <option value="branch">Branch Chat</option>
+          <option value="year">Year-wide Chat</option>
+        </select>
+
+        <select id="chat-branch">
+          <option value="CSE">CSE</option>
+          <option value="ECE">ECE</option>
+          <option value="ME">ME</option>
+        </select>
+
+        <select id="chat-year">
+          <option value="2020">2020</option>
+          <option value="2021">2021</option>
+          <option value="2022">2022</option>
+        </select>
+
+        <button id="btn-clear-year" class="btn-link">Clear Year Chat (admin)</button>
+      </div>
+
+      <div class="chat-area card">
+        <div id="chat-messages" class="chat-messages"></div>
+        <div class="chat-send">
+          <input id="chat-input" placeholder="Write a message..." />
+          <button id="chat-send-btn">Send</button>
         </div>
       </div>
     </section>
 
-    <!-- GALLERY -->
-    <section id="gallery" class="page" aria-hidden="true">
-      <div class="card">
-        <h3>Gallery</h3>
-        <div class="muted">Upload and relive event moments.</div>
-
-        <div class="gallery" id="galleryGrid" style="margin-top:12px">
-          <!-- images populated by JS -->
+    <section id="help" class="section">
+      <div class="section-head"><h2>Quick Help (Chatbot)</h2></div>
+      <div class="card chatbot">
+        <div id="bot-messages" class="chat-messages"></div>
+        <div class="chat-send">
+          <input id="bot-input" placeholder="Ask the assistant (e.g. 'how to register for webinar')" />
+          <button id="bot-send">Ask</button>
         </div>
       </div>
     </section>
 
-    <!-- DONATIONS -->
-    <section id="donations" class="page" aria-hidden="true">
-      <div class="card">
-        <h3>Donations</h3>
-        <div class="muted">Support scholarships, labs and student projects.</div>
+  </main>
 
-        <div style="margin-top:12px;display:flex;gap:12px;align-items:center">
-          <div style="flex:1">
-            <div class="muted">Campaign progress</div>
-            <div class="progress" style="margin-top:8px"><i id="donProgress"></i></div>
-            <div style="margin-top:8px;font-weight:700" id="raisedText">₹0 raised</div>
-          </div>
-          <div>
-            <button class="btn" id="donateNow">Donate Now</button>
-          </div>
-        </div>
+  <!-- Lightbox / Modals container -->
+  <div id="modals"></div>
 
-        <div style="margin-top:12px">
-          <h4 style="margin:0 0 8px 0">Recent Donations</h4>
-          <div id="donationList" style="display:flex;flex-direction:column;gap:8px"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- CHATBOT PAGE -->
-    <section id="chatbot" class="page" aria-hidden="true">
-      <div class="card">
-        <h3>AI Chatbot — Hive Assistant</h3>
-        <div class="muted">Ask about events, donations, rewards, profile tips and more.</div>
-
-        <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
-          <input id="botInput" placeholder="Ask a question..." style="flex:1;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#fff"/>
-          <button class="btn" id="askBot">Send</button>
-        </div>
-
-        <div id="botOutput" style="margin-top:12px;display:flex;flex-direction:column;gap:8px"></div>
-      </div>
-    </section>
-
-    <footer class="site-footer">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
-        <div>© <strong>Hive Connect</strong> 2025 — Connecting alumni across generations.</div>
-        <div style="color:var(--muted)">Build great things together — <span style="font-weight:700">Alumni Relations</span></div>
-      </div>
-    </footer>
-  </div>
-
-  <!-- lightbox -->
-  <div id="lightbox" class="lightbox" role="dialog" aria-hidden="true" onclick="closeLightbox()">
-    <img id="lightboxImg" src="" alt="enlarged photo"/>
-  </div>
-
-  <!-- donate modal (simple) -->
-  <div id="donModal" style="position:fixed;left:0;top:0;right:0;bottom:0;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;z-index:999">
-    <div style="width:100%;max-width:520px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;padding:18px;border:1px solid rgba(255,255,255,0.03)">
-      <h3 style="margin-top:0">Make a Donation</h3>
-      <div style="display:flex;gap:8px;margin-top:12px">
-        <input id="donorName" placeholder="Your name" style="flex:1;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#fff"/>
-        <input id="donorAmount" placeholder="Amount (₹)" type="number" style="width:140px;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#fff"/>
-      </div>
-      <div style="margin-top:12px;display:flex;justify-content:flex-end;gap:8px">
-        <button class="btn ghost" onclick="closeDonModal()">Cancel</button>
-        <button class="btn" onclick="submitDonation()">Donate</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Chat floating -->
-  <div class="chat-fab" id="chatFab" aria-label="Chat with Hive Bot" title="Chat with Hive Bot">
-    <i class="fas fa-robot"></i><span>Chat</span>
-  </div>
-
-  <!-- Chat window -->
-  <div class="chat-window" id="chatWindow" style="display:none" role="dialog" aria-hidden="true">
-    <div class="header" style="display:flex;align-items:center;justify-content:space-between">
-      <div style="display:flex;gap:10px;align-items:center">
-        <div style="width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,var(--accent-1),var(--accent-2));display:flex;align-items:center;justify-content:center"><i class="fas fa-robot"></i></div>
-        <div>
-          <div style="font-weight:700">Hive Assistant</div>
-          <div style="font-size:12px;color:var(--muted)">Ask me anything — events, donations, profile help</div>
-        </div>
-      </div>
-      <div style="display:flex;gap:8px;align-items:center">
-        <button class="btn ghost" id="clearChat">Clear</button>
-        <button class="btn" id="closeChat">Close</button>
-      </div>
-    </div>
-
-    <div class="body" id="chatBody" style="display:flex;flex-direction:column;padding:12px;gap:8px;overflow:auto">
-      <div class="chat-msg in">Hi — I'm Hive Assistant. Try "upcoming events" or "donation status".</div>
-    </div>
-
-    <div class="footer" style="display:flex;gap:8px;padding:10px">
-      <input id="chatInput" placeholder="Type a question..." style="flex:1;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#fff"/>
-      <button class="btn" id="sendChat">Send</button>
-    </div>
-  </div>
-
-<script>
-  /* -------------------------
-     Demo data + localStorage initialization
-     ------------------------- */
-  const LS = {
-    invites: 'hc_alumni_invites_v1',
-    gallery: 'hc_alumni_gallery_v1',
-    donations: 'hc_alumni_don_v1',
-    announcements: 'hc_alumni_ann_v1',
-    chat: 'hc_alumni_chat_v1'
-  };
-
-  function initDemo(){
-    if(!localStorage.getItem(LS.invites)){
-      const demoInv = [
-        {id:1,title:'Annual Alumni Meet 2025', date:'2025-12-15', loc:'Main Campus', from:'Student Council', status:'pending'},
-        {id:2,title:'Mentorship Program Kickoff', date:'2025-10-01', loc:'Auditorium', from:'Alumni Relations', status:'pending'}
-      ];
-      localStorage.setItem(LS.invites, JSON.stringify(demoInv));
-    }
-    if(!localStorage.getItem(LS.gallery)){
-      const imgs = [
-        'https://picsum.photos/seed/101/800/600',
-        'https://picsum.photos/seed/102/800/600',
-        'https://picsum.photos/seed/103/800/600',
-        'https://picsum.photos/seed/104/800/600',
-        'https://picsum.photos/seed/105/800/600'
-      ];
-      localStorage.setItem(LS.gallery, JSON.stringify(imgs));
-    }
-    if(!localStorage.getItem(LS.donations)){
-      const don = [{name:'Priya',amount:5000,date:'2025-08-20'},{name:'Rahul',amount:10000,date:'2025-09-01'}];
-      localStorage.setItem(LS.donations, JSON.stringify(don));
-    }
-    if(!localStorage.getItem(LS.announcements)){
-      const ann = [
-        {sender:'Admin Team',time:'Sept 8, 2025',content:'Welcome to the upgraded alumni portal — update your profile!'},
-        {sender:'Career Services',time:'Sept 4, 2025',content:'Virtual career fair on Oct 15. Register to connect with employers.'}
-      ];
-      localStorage.setItem(LS.announcements, JSON.stringify(ann));
-    }
-    if(!localStorage.getItem(LS.chat)){
-      localStorage.setItem(LS.chat, JSON.stringify([]));
-    }
-  }
-  initDemo();
-
-  /* -------------------------
-     Page navigation (SPA)
-     ------------------------- */
-  const navLinks = document.querySelectorAll('.nav-link');
-  function showPage(pageId){
-    document.querySelectorAll('.page').forEach(p=>{ p.classList.remove('active'); p.setAttribute('aria-hidden','true'); });
-    const el = document.getElementById(pageId);
-    if(el){ el.classList.add('active'); el.setAttribute('aria-hidden','false'); }
-    navLinks.forEach(n=>n.classList.toggle('active', n.dataset.page === pageId));
-    // render dynamic content on page show
-    if(pageId === 'invitations') renderInvitations();
-    if(pageId === 'gallery') renderGallery();
-    if(pageId === 'donations') renderDonations();
-    if(pageId === 'chatbot') renderBotArea();
-  }
-  navLinks.forEach(n => n.addEventListener('click', ()=> showPage(n.dataset.page)));
-  document.querySelectorAll('[data-page]').forEach(btn=>{
-    btn.addEventListener('click', ()=> showPage(btn.dataset.page));
-  });
-
-  /* -------------------------
-     Announcements
-     ------------------------- */
-  function renderAnnouncements(){
-    const container = document.getElementById('announcements');
-    const list = JSON.parse(localStorage.getItem(LS.announcements) || '[]');
-    container.innerHTML = '';
-    list.slice(0,3).forEach(a=>{
-      const d = document.createElement('div');
-      d.style.padding = '10px';
-      d.style.borderRadius = '8px';
-      d.style.background = 'linear-gradient(90deg, rgba(255,255,255,0.02), transparent)';
-      d.style.marginBottom = '8px';
-      d.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><strong>${escape(a.sender)}</strong><span style="font-size:12px;color:var(--muted)">${escape(a.time)}</span></div><div style="color:var(--muted);margin-top:8px">${escape(a.content)}</div>`;
-      container.appendChild(d);
-    });
-  }
-  function escape(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
-  renderAnnouncements();
-
-  /* -------------------------
-     Invitations
-     ------------------------- */
-  function renderInvitations(){
-    const list = JSON.parse(localStorage.getItem(LS.invites) || '[]');
-    const container = document.getElementById('invitation-list');
-    container.innerHTML = '';
-    if(!list.length){
-      container.innerHTML = '<div class="muted">No invitations at the moment.</div>';
-      return;
-    }
-    list.forEach(inv => {
-      const item = document.createElement('div');
-      item.className = 'invitation-item';
-      item.innerHTML = `
-        <div>
-          <div style="font-weight:700">${escape(inv.title)}</div>
-          <div class="muted">${escape(inv.date)} • ${escape(inv.loc)} • Invited by ${escape(inv.from)}</div>
-        </div>
-        <div class="invitation-actions">
-          <button class="btn accept" data-id="${inv.id}">${inv.status === 'accepted' ? 'Accepted' : 'Accept'}</button>
-          <button class="btn ghost decline" data-id="${inv.id}">${inv.status === 'declined' ? 'Declined' : 'Decline'}</button>
-        </div>
-      `;
-      container.appendChild(item);
-    });
-
-    // attach handlers
-    container.querySelectorAll('.accept').forEach(b => {
-      b.onclick = (e) => {
-        const id = Number(e.target.dataset.id);
-        updateInvite(id, 'accepted');
-      };
-    });
-    container.querySelectorAll('.decline').forEach(b => {
-      b.onclick = (e) => {
-        const id = Number(e.target.dataset.id);
-        updateInvite(id, 'declined');
-      };
-    });
-  }
-
-  function updateInvite(id, status){
-    const arr = JSON.parse(localStorage.getItem(LS.invites) || '[]');
-    const idx = arr.findIndex(x=>x.id===id);
-    if(idx>=0){
-      arr[idx].status = status;
-      localStorage.setItem(LS.invites, JSON.stringify(arr));
-      renderInvitations();
-      alert('Invitation ' + status);
-    }
-  }
-
-  // New invite (demo UI)
-  document.getElementById('new-invite').addEventListener('click', ()=>{
-    const title = prompt('Event title','Campus Networking');
-    if(!title) return;
-    const arr = JSON.parse(localStorage.getItem(LS.invites) || '[]');
-    const id = Date.now();
-    arr.unshift({id,title,date:'TBD',loc:'TBD',from:'You',status:'pending'});
-    localStorage.setItem(LS.invites, JSON.stringify(arr));
-    renderInvitations();
-    showPage('invitations');
-  });
-
-  /* -------------------------
-     Gallery (lightbox)
-     ------------------------- */
-  function renderGallery(){
-    const grid = document.getElementById('galleryGrid');
-    const imgs = JSON.parse(localStorage.getItem(LS.gallery) || '[]');
-    grid.innerHTML = '';
-    imgs.forEach((src, i) => {
-      const img = document.createElement('img');
-      img.src = src;
-      img.alt = 'Gallery photo';
-      img.loading = 'lazy';
-      img.onclick = ()=> openLightbox(src);
-      grid.appendChild(img);
-    });
-  }
-  function openLightbox(src){ const lb = document.getElementById('lightbox'); document.getElementById('lightboxImg').src = src; lb.classList.add('open'); lb.setAttribute('aria-hidden','false'); }
-  function closeLightbox(){ const lb = document.getElementById('lightbox'); lb.classList.remove('open'); lb.setAttribute('aria-hidden','true'); }
-
-  /* -------------------------
-     Donations
-     ------------------------- */
-  function renderDonations(){
-    const arr = JSON.parse(localStorage.getItem(LS.donations) || '[]');
-    const total = arr.reduce((s,x)=>s+(Number(x.amount)||0),0);
-    const goal = 200000;
-    const pct = Math.min(100, Math.round((total/goal)*100));
-    document.getElementById('donProgress').style.width = pct + '%';
-    document.getElementById('raisedText').textContent = '₹' + total.toLocaleString();
-    const list = document.getElementById('donationList');
-    list.innerHTML = '';
-    arr.slice(0,6).forEach(d => {
-      const el = document.createElement('div');
-      el.style.padding = '8px';
-      el.style.borderRadius = '8px';
-      el.style.background = 'rgba(255,255,255,0.02)';
-      el.innerHTML = `<strong>${escape(d.name)}</strong> donated <span style="font-weight:700">₹${Number(d.amount).toLocaleString()}</span> <div class="muted">${escape(d.date)}</div>`;
-      list.appendChild(el);
-    });
-  }
-  renderDonations();
-
-  document.getElementById('donateNow').addEventListener('click', ()=> showDonModal());
-  document.getElementById('open-donate')?.addEventListener('click', ()=> showDonModal());
-  function showDonModal(){ document.getElementById('donModal').style.display = 'flex'; }
-  function closeDonModal(){ document.getElementById('donModal').style.display = 'none'; }
-
-  function submitDonation(){
-    const name = document.getElementById('donorName').value || 'Anonymous';
-    const amount = Number(document.getElementById('donorAmount').value) || 0;
-    if(!amount){ alert('Enter an amount'); return; }
-    const arr = JSON.parse(localStorage.getItem(LS.donations) || '[]');
-    arr.unshift({name,amount,date: new Date().toISOString().slice(0,10)});
-    localStorage.setItem(LS.donations, JSON.stringify(arr));
-    closeDonModal();
-    document.getElementById('donorName').value = '';
-    document.getElementById('donorAmount').value = '';
-    renderDonations();
-    // update summary stat (demo)
-    document.getElementById('stat-donations').textContent = '₹ ' + arr.reduce((s,x)=>s+(Number(x.amount)||0),0).toLocaleString();
-    alert('Thank you for your contribution!');
-  }
-
-  /* -------------------------
-     Chatbot (simple rule-based replies)
-     ------------------------- */
-  const chatBody = document.getElementById('chatBody');
-  const chatWindow = document.getElementById('chatWindow');
-  function appendChat(msg, type='in'){
-    const div = document.createElement('div');
-    div.className = 'chat-msg ' + (type === 'in' ? 'in' : 'out');
-    div.textContent = msg;
-    chatBody.appendChild(div);
-    chatBody.scrollTop = chatBody.scrollHeight;
-  }
-  document.getElementById('chatFab').addEventListener('click', ()=>{
-    chatWindow.style.display = 'flex';
-    chatWindow.style.opacity = '1';
-  });
-  document.getElementById('closeChat').addEventListener('click', ()=> chatWindow.style.display = 'none');
-  document.getElementById('clearChat').addEventListener('click', ()=> { chatBody.innerHTML = ''; });
-
-  document.getElementById('sendChat').addEventListener('click', () => {
-    const text = document.getElementById('chatInput').value.trim();
-    if(!text) return;
-    appendChat(text, 'out'); document.getElementById('chatInput').value = '';
-    setTimeout(()=> {
-      appendChat(botReply(text), 'in');
-    }, 600);
-  });
-
-  // small chatbot used on chatbot page
-  document.getElementById('askBot').addEventListener('click', ()=>{
-    const txt = document.getElementById('botInput').value.trim();
-    if(!txt) return;
-    const out = document.getElementById('botOutput');
-    const qb = document.createElement('div'); qb.className = 'chat-msg out'; qb.textContent = txt; out.appendChild(qb);
-    setTimeout(()=> {
-      const r = botReply(txt);
-      const rb = document.createElement('div'); rb.className = 'chat-msg in'; rb.textContent = r; out.appendChild(rb);
-    }, 500);
-  });
-
-  function botReply(msg){
-    const m = msg.toLowerCase();
-    if(m.includes('event')) return 'Upcoming: Annual Alumni Meet on Dec 15, 2025. You can RSVP from Invitations.';
-    if(m.includes('donat')) return 'Donations support scholarships. Click Donate in the Donations section.';
-    if(m.includes('profile')) return 'Go to your profile (top-right) and update details. (Demo: profile editing not included here)';
-    if(m.includes('points') || m.includes('reward')) return 'You have 320 points. Redeem them in Rewards.';
-    if(m.includes('hi')||m.includes('hello')) return 'Hello! I can help with events, donations and rewards.';
-    return "Sorry — I'm a demo bot. Try: 'upcoming events', 'donate', 'rewards'.";
-  }
-
-  /* -------------------------
-     Gallery click / lightbox close
-     ------------------------- */
-  document.getElementById('lightbox').addEventListener('click', (e)=>{
-    if(e.target.id === 'lightbox') closeLightbox();
-  });
-
-  /* -------------------------
-     Search quick behavior
-     ------------------------- */
-  document.getElementById('global-search').addEventListener('keydown', (ev)=>{
-    if(ev.key !== 'Enter') return;
-    const q = ev.target.value.trim().toLowerCase();
-    if(!q) return;
-    // simple search through invites and gallery
-    const invites = JSON.parse(localStorage.getItem(LS.invites) || '[]').filter(i => (i.title + i.from + i.loc).toLowerCase().includes(q));
-    if(invites.length){ showPage('invitations'); return; }
-    const imgs = JSON.parse(localStorage.getItem(LS.gallery) || '[]').filter(src => src.includes(q));
-    if(imgs.length){ showPage('gallery'); return; }
-    alert('No quick results found (demo search)');
-  });
-
-  /* -------------------------
-     Notifications simulation
-     ------------------------- */
-  let notifCount = Number(document.getElementById('notif-count').textContent) || 0;
-  setInterval(()=> {
-    notifCount += 1;
-    document.getElementById('notif-count').textContent = notifCount;
-  }, 60000); // every minute
-
-  /* -------------------------
-     Render initial content
-     ------------------------- */
-  function renderInitial(){
-    // names
-    document.getElementById('alName').textContent = 'Alumni User';
-    document.getElementById('welcomeName').textContent = 'Alumni User';
-    document.getElementById('navAvatar').textContent = 'AU';
-    // stats (demo)
-    document.getElementById('stat-alumni').textContent = '1,200';
-    document.getElementById('stat-events').textContent = JSON.parse(localStorage.getItem(LS.invites) || '[]').length;
-    document.getElementById('stat-donations').textContent = '₹ ' + (JSON.parse(localStorage.getItem(LS.donations)||'[]').reduce((s,x)=>s+(Number(x.amount)||0),0)).toLocaleString();
-    renderInvitations();
-    renderGallery();
-    renderDonations();
-  }
-  renderInitial();
-
-  /* -------------------------
-     Utility helpers
-     ------------------------- */
-  function escapeHtml(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
-  // close donations modal on outside click
-  document.getElementById('donModal').addEventListener('click', (e)=> { if(e.target === document.getElementById('donModal')) closeDonModal(); });
-
-  // create-invite quick demo
-  document.getElementById('create-invite').addEventListener('click', ()=>{
-    showPage('invitations');
-    setTimeout(()=> document.getElementById('new-invite').click(), 200);
-  });
-
-  // allow shortcuts from announcement button
-  document.getElementById('all-announcements').addEventListener('click', ()=> alert('This would open all admin announcements (demo).'));
-
-  // close lightbox with Esc
-  window.addEventListener('keydown', (e)=> { if(e.key === 'Escape') { closeLightbox(); document.getElementById('donModal').style.display='none'; chatWindow.style.display='none'; } });
-
-  /* -------------------------
-     Small note: All data in this file is demo/local (localStorage).
-     Replace localStorage calls with API fetch/POST when integrating backend.
-     ------------------------- */
-
-</script>
+  <script src="script.js"></script>
 </body>
 </html>
