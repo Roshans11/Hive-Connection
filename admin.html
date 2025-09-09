@@ -450,21 +450,42 @@
   <div class="container">
 
     <!-- Header -->
-    <header>
-      <div class="header-content">
-        <div class="logo"><i class="fas fa-users"></i><h1>Hive Connect</h1></div>
-        <div class="user-actions">
-          <div class="notification-bell" title="Notifications">
-            <i class="fas fa-bell"></i>
-            <span class="notification-badge" id="notif-badge">3</span>
-          </div>
-          <div class="user-profile">
-            <div class="avatar" aria-hidden="true">AS</div>
-            <div><strong>Alumni User</strong><div style="font-size:12px;color:var(--text-light)">Alumni • Batch 2018</div></div>
-          </div>
+   <header>
+  <div class="header-content">
+    <div class="logo">
+      <i class="fas fa-users"></i>
+      <h1>Hive Connect</h1>
+    </div>
+
+    <div class="user-actions">
+      <!-- 🔙 Back Button -->
+      <div class="back-btn" title="Go Back">
+        <a href="javascript:history.back()"><i class="fas fa-arrow-left"></i></a>
+      </div>
+
+      <!-- 🏠 Home Button -->
+      <div class="home" title="Home">
+        <a href="home.html"><i class="fas fa-home"></i></a>
+      </div>
+
+      <!-- 🔔 Notification Bell -->
+      <div class="notification-bell" title="Notifications">
+        <i class="fas fa-bell"></i>
+        <span class="notification-badge" id="notif-badge">3</span>
+      </div>
+
+      <!-- 👤 User Profile -->
+      <div class="user-profile">
+        <div class="avatar" aria-hidden="true">AS</div>
+        <div>
+          <strong>Alumni User</strong>
+          <div style="font-size:12px;color:var(--text-light)">Alumni • Batch 2018</div>
         </div>
       </div>
-    </header>
+    </div>
+  </div>
+</header>
+
 
     <!-- DASHBOARD PAGE -->
     <main id="dashboard-page" class="dashboard">
