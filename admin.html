@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Hive Connection - Admin Dashboard</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
+        /* ---------- YOUR ORIGINAL STYLES (UNCHANGED) ---------- */
         * {
             margin: 0;
             padding: 0;
@@ -601,6 +602,125 @@
             height: 100%;
             transition: width 0.3s ease;
         }
+
+        /* ---------- ADDED: Chatbot + small helper styles (keeps theme) ---------- */
+        .hc-chat-fab {
+            position: fixed;
+            right: 24px;
+            bottom: 24px;
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            background: linear-gradient(45deg,#e91e63,#8b45c3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            z-index: 1100;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+            border: 2px solid rgba(255,255,255,0.06);
+        }
+
+        .hc-chat-window {
+            position: fixed;
+            right: 24px;
+            bottom: 92px;
+            width: 360px;
+            max-width: calc(100% - 48px);
+            height: 480px;
+            background: linear-gradient(180deg, rgba(10,10,18,0.98), rgba(20,18,28,0.98));
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+            z-index: 1100;
+            display: none;
+            overflow: hidden;
+            border: 1px solid rgba(139,69,195,0.25);
+        }
+
+        .hc-chat-window.visible { display: block; }
+
+        .hc-chat-header {
+            padding: 12px 14px;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            background: linear-gradient(90deg, rgba(233,30,99,0.06), rgba(139,69,195,0.04));
+            border-bottom: 1px solid rgba(139,69,195,0.06);
+        }
+
+        .hc-chat-title {
+            color: #fff;
+            font-weight:700;
+            font-size:14px;
+            display:flex;
+            gap:8px;
+            align-items:center;
+        }
+
+        .hc-chat-body {
+            padding: 12px;
+            height: calc(100% - 120px);
+            overflow-y: auto;
+            display:flex;
+            flex-direction:column;
+            gap:10px;
+        }
+
+        .hc-msg {
+            max-width: 78%;
+            padding: 10px 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            line-height: 1.3;
+        }
+
+        .hc-msg.user {
+            align-self: flex-end;
+            background: linear-gradient(90deg,#e91e63,#8b45c3);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .hc-msg.bot {
+            align-self: flex-start;
+            background: rgba(255,255,255,0.06);
+            color: #e6edf3;
+            border-bottom-left-radius: 4px;
+        }
+
+        .hc-chat-footer {
+            padding: 10px;
+            display:flex;
+            gap:8px;
+            align-items:center;
+            border-top: 1px solid rgba(139,69,195,0.06);
+            background: rgba(0,0,0,0.02);
+        }
+
+        .hc-chat-footer input[type="text"] {
+            flex:1;
+            padding:8px 12px;
+            border-radius: 999px;
+            border:1px solid rgba(139,69,195,0.12);
+            background: rgba(26,26,46,0.85);
+            color: white;
+        }
+
+        .hc-chat-footer button {
+            padding:8px 12px;
+            border-radius: 999px;
+            border:none;
+            background: linear-gradient(45deg,#e91e63,#8b45c3);
+            color: white;
+            cursor:pointer;
+        }
+
+        /* small responsive tweak for content sections (so modals & wide tables fit) */
+        @media (max-width: 900px) {
+            .main-content { padding: 1rem; }
+            .hc-chat-window { width: 92%; right: 4%; }
+        }
     </style>
 </head>
 <body>
@@ -613,62 +733,62 @@
             </div>
             
             <nav class="nav-menu">
-                <div class="nav-item active" onclick="switchSection('dashboard')">
-                    <a href="#" class="nav-link">
+                <div class="nav-item active" data-section="dashboard" onclick="switchSection('dashboard')">
+                    <a href="javascript:void(0)" class="nav-link">
                         <i class="fas fa-chart-line"></i>
                         Dashboard
                     </a>
                 </div>
-                <div class="nav-item" onclick="switchSection('students')">
-                    <a href="#" class="nav-link">
+                <div class="nav-item" data-section="students" onclick="switchSection('students')">
+                    <a href="javascript:void(0)" class="nav-link">
                         <i class="fas fa-user-graduate"></i>
                         Students
                         <span class="badge">1200</span>
                     </a>
                 </div>
-                <div class="nav-item" onclick="switchSection('alumni')">
-                    <a href="#" class="nav-link">
+                <div class="nav-item" data-section="alumni" onclick="switchSection('alumni')">
+                    <a href="javascript:void(0)" class="nav-link">
                         <i class="fas fa-users"></i>
                         Alumni
                         <span class="badge">850</span>
                     </a>
                 </div>
-                <div class="nav-item" onclick="switchSection('news')">
-                    <a href="#" class="nav-link">
+                <div class="nav-item" data-section="news" onclick="switchSection('news')">
+                    <a href="javascript:void(0)" class="nav-link">
                         <i class="fas fa-newspaper"></i>
                         News
                         <span class="badge">3</span>
                     </a>
                 </div>
-                <div class="nav-item" onclick="switchSection('events')">
-                    <a href="#" class="nav-link">
+                <div class="nav-item" data-section="events" onclick="switchSection('events')">
+                    <a href="javascript:void(0)" class="nav-link">
                         <i class="fas fa-calendar-alt"></i>
                         Events
                         <span class="badge">5</span>
                     </a>
                 </div>
-                <div class="nav-item" onclick="switchSection('chatgroups')">
-                    <a href="#" class="nav-link">
+                <div class="nav-item" data-section="chatgroups" onclick="switchSection('chatgroups')">
+                    <a href="javascript:void(0)" class="nav-link">
                         <i class="fas fa-comments"></i>
                         Chat Groups
                         <span class="badge">12</span>
                     </a>
                 </div>
-                <div class="nav-item" onclick="switchSection('donations')">
-                    <a href="#" class="nav-link">
+                <div class="nav-item" data-section="donations" onclick="switchSection('donations')">
+                    <a href="javascript:void(0)" class="nav-link">
                         <i class="fas fa-heart"></i>
                         Donations
                     </a>
                 </div>
-                <div class="nav-item" onclick="switchSection('notices')">
-                    <a href="#" class="nav-link">
+                <div class="nav-item" data-section="notices" onclick="switchSection('notices')">
+                    <a href="javascript:void(0)" class="nav-link">
                         <i class="fas fa-bell"></i>
                         Notices
                         <span class="badge">2</span>
                     </a>
                 </div>
-                <div class="nav-item" onclick="switchSection('settings')">
-                    <a href="#" class="nav-link">
+                <div class="nav-item" data-section="settings" onclick="switchSection('settings')">
+                    <a href="javascript:void(0)" class="nav-link">
                         <i class="fas fa-cog"></i>
                         Settings
                     </a>
@@ -686,7 +806,7 @@
                     </div>
                     <div class="search-box">
                         <i class="fas fa-search"></i>
-                        <input type="text" placeholder="Search...">
+                        <input id="globalSearch" type="text" placeholder="Search...">
                     </div>
                 </div>
 
@@ -694,22 +814,22 @@
                 <div class="stats-grid">
                     <div class="stat-card">
                         <h3>Total Students</h3>
-                        <div class="number">1,200</div>
+                        <div class="number" id="statStudents">1,200</div>
                         <div class="change">↗ +12% from last month</div>
                     </div>
                     <div class="stat-card">
                         <h3>Active Alumni</h3>
-                        <div class="number">850</div>
+                        <div class="number" id="statAlumni">850</div>
                         <div class="change">↗ +8% from last month</div>
                     </div>
                     <div class="stat-card">
                         <h3>Upcoming Events</h3>
-                        <div class="number">5</div>
+                        <div class="number" id="statEvents">5</div>
                         <div class="change">→ Same as last month</div>
                     </div>
                     <div class="stat-card">
                         <h3>Active Groups</h3>
-                        <div class="number">12</div>
+                        <div class="number" id="statGroups">12</div>
                         <div class="change">↗ +3 new groups</div>
                     </div>
                 </div>
@@ -766,7 +886,7 @@
                 
                 <div class="groups-section">
                     <h3>Student List</h3>
-                    <table class="data-table">
+                    <table class="data-table" id="studentsTable">
                         <thead>
                             <tr>
                                 <th>Name</th>
@@ -778,30 +898,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>John Smith</td>
-                                <td>CS2024001</td>
-                                <td>Computer Science</td>
-                                <td>Final Year</td>
-                                <td><span class="status-badge status-active">Active</span></td>
-                                <td><i class="fas fa-edit" style="cursor: pointer; color: #e91e63; margin-right: 10px;"></i><i class="fas fa-trash" style="cursor: pointer; color: #f44336;"></i></td>
-                            </tr>
-                            <tr>
-                                <td>Sarah Johnson</td>
-                                <td>EE2023045</td>
-                                <td>Electrical Engineering</td>
-                                <td>Third Year</td>
-                                <td><span class="status-badge status-active">Active</span></td>
-                                <td><i class="fas fa-edit" style="cursor: pointer; color: #e91e63; margin-right: 10px;"></i><i class="fas fa-trash" style="cursor: pointer; color: #f44336;"></i></td>
-                            </tr>
-                            <tr>
-                                <td>Mike Wilson</td>
-                                <td>ME2022078</td>
-                                <td>Mechanical Engineering</td>
-                                <td>Second Year</td>
-                                <td><span class="status-badge status-inactive">Inactive</span></td>
-                                <td><i class="fas fa-edit" style="cursor: pointer; color: #e91e63; margin-right: 10px;"></i><i class="fas fa-trash" style="cursor: pointer; color: #f44336;"></i></td>
-                            </tr>
+                            <!-- rows injected here -->
                         </tbody>
                     </table>
                 </div>
@@ -819,7 +916,7 @@
                 
                 <div class="groups-section">
                     <h3>Alumni Directory</h3>
-                    <table class="data-table">
+                    <table class="data-table" id="alumniTable">
                         <thead>
                             <tr>
                                 <th>Name</th>
@@ -828,37 +925,904 @@
                                 <th>Current Company</th>
                                 <th>Position</th>
                                 <th>Status</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>Emily Davis</td>
-                                <td>2020</td>
-                                <td>Computer Science</td>
-                                <td>Google</td>
-                                <td>Software Engineer</td>
-                                <td><span class="status-badge status-active">Active</span></td>
-                            </tr>
-                            <tr>
-                                <td>Robert Brown</td>
-                                <td>2019</td>
-                                <td>Electrical Engineering</td>
-                                <td>Tesla</td>
-                                <td>Hardware Engineer</td>
-                                <td><span class="status-badge status-active">Active</span></td>
-                            </tr>
-                            <tr>
-                                <td>Lisa Anderson</td>
-                                <td>2018</td>
-                                <td>Mechanical Engineering</td>
-                                <td>SpaceX</td>
-                                <td>Design Engineer</td>
-                                <td><span class="status-badge status-inactive">Inactive</span></td>
-                            </tr>
+                            <!-- rows injected here -->
                         </tbody>
                     </table>
                 </div>
             </div>
 
             <!-- News Section -->
-            <div class="content-section
+            <div class="content-section" id="news">
+                <div class="header">
+                    <h1>News</h1>
+                    <button class="primary-btn" onclick="openModal('addNewsModal')">
+                        <i class="fas fa-plus"></i>
+                        Add News
+                    </button>
+                </div>
+
+                <div class="groups-section">
+                    <h3>News List</h3>
+                    <table class="data-table" id="newsTable">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Published On</th>
+                                <th>Summary</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody><!-- injected --></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Events Section -->
+            <div class="content-section" id="events">
+                <div class="header">
+                    <h1>Events</h1>
+                    <button class="primary-btn" onclick="openModal('addEventModal')">
+                        <i class="fas fa-plus"></i>
+                        Create Event
+                    </button>
+                </div>
+
+                <div class="groups-section" id="eventsList">
+                    <!-- event cards injected -->
+                </div>
+            </div>
+
+            <!-- Chat Groups Section -->
+            <div class="content-section" id="chatgroups">
+                <div class="header">
+                    <h1>Chat Groups</h1>
+                    <button class="primary-btn" onclick="openModal('addGroupModal')">
+                        <i class="fas fa-plus"></i>
+                        Create Group
+                    </button>
+                </div>
+
+                <div class="groups-section">
+                    <h3>Groups</h3>
+                    <table class="data-table" id="groupsTable">
+                        <thead>
+                            <tr>
+                                <th>Group Name</th>
+                                <th>Members</th>
+                                <th>Type</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody><!-- injected --></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Donations Section -->
+            <div class="content-section" id="donations">
+                <div class="header">
+                    <h1>Donations</h1>
+                    <button class="primary-btn" onclick="openModal('addDonationModal')">
+                        <i class="fas fa-plus"></i>
+                        Add Donation
+                    </button>
+                </div>
+
+                <div class="groups-section">
+                    <h3>Donations</h3>
+                    <table class="data-table" id="donationsTable">
+                        <thead>
+                            <tr>
+                                <th>Donor</th>
+                                <th>Amount</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody><!-- injected --></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Notices Section -->
+            <div class="content-section" id="notices">
+                <div class="header">
+                    <h1>Notices</h1>
+                    <button class="primary-btn" onclick="openModal('addNoticeModal')">
+                        <i class="fas fa-plus"></i>
+                        Add Notice
+                    </button>
+                </div>
+
+                <div class="groups-section">
+                    <h3>Notices</h3>
+                    <table class="data-table" id="noticesTable">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Date</th>
+                                <th>Summary</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody><!-- injected --></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Settings Section -->
+            <div class="content-section" id="settings">
+                <div class="header">
+                    <h1>Settings</h1>
+                </div>
+                <div class="groups-section">
+                    <h3>Platform Settings</h3>
+                    <div style="display:flex;flex-direction:column;gap:12px;">
+                        <label style="color:rgba(255,255,255,0.9);font-weight:600;">Platform Name</label>
+                        <input id="settingPlatformName" class="form-group-input" placeholder="Hive Connection" style="padding:10px;border-radius:8px;border:1px solid rgba(139,69,195,0.2);background:rgba(26,26,46,0.8);color:white;">
+                        <div style="display:flex;gap:12px;">
+                            <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+                            <button class="btn btn-secondary" onclick="resetData()">Reset DB (local)</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ---------- MODALS (Add/Edit) ---------- -->
+    <!-- Add Student Modal -->
+    <div id="addStudentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Student</h3>
+                <button class="close-btn" onclick="closeModal('addStudentModal')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Name</label>
+                <input id="stu_name" placeholder="Full name">
+            </div>
+            <div class="form-group">
+                <label>Student ID</label>
+                <input id="stu_id" placeholder="eg: CS2025001">
+            </div>
+            <div class="form-group">
+                <label>Department</label>
+                <input id="stu_dept" placeholder="eg: Computer Science">
+            </div>
+            <div class="form-group">
+                <label>Year</label>
+                <input id="stu_year" placeholder="eg: Final Year">
+            </div>
+            <div class="form-actions">
+                <button class="btn btn-secondary" onclick="closeModal('addStudentModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="addStudent()">Add Student</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Student Modal -->
+    <div id="editStudentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Student</h3>
+                <button class="close-btn" onclick="closeModal('editStudentModal')">&times;</button>
+            </div>
+            <input type="hidden" id="edit_stu_index">
+            <div class="form-group">
+                <label>Name</label>
+                <input id="edit_stu_name">
+            </div>
+            <div class="form-group">
+                <label>Student ID</label>
+                <input id="edit_stu_id">
+            </div>
+            <div class="form-group">
+                <label>Department</label>
+                <input id="edit_stu_dept">
+            </div>
+            <div class="form-group">
+                <label>Year</label>
+                <input id="edit_stu_year">
+            </div>
+            <div class="form-actions">
+                <button class="btn btn-secondary" onclick="closeModal('editStudentModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="saveEditedStudent()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Alumni Modal -->
+    <div id="addAlumniModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Alumni</h3>
+                <button class="close-btn" onclick="closeModal('addAlumniModal')">&times;</button>
+            </div>
+            <div class="form-group"><label>Name</label><input id="al_name"></div>
+            <div class="form-group"><label>Graduation Year</label><input id="al_year"></div>
+            <div class="form-group"><label>Department</label><input id="al_dept"></div>
+            <div class="form-group"><label>Company</label><input id="al_company"></div>
+            <div class="form-group"><label>Position</label><input id="al_position"></div>
+            <div class="form-actions">
+                <button class="btn btn-secondary" onclick="closeModal('addAlumniModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="addAlumni()">Add Alumni</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Alumni Modal -->
+    <div id="editAlumniModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h3>Edit Alumni</h3><button class="close-btn" onclick="closeModal('editAlumniModal')">&times;</button></div>
+            <input type="hidden" id="edit_al_index">
+            <div class="form-group"><label>Name</label><input id="edit_al_name"></div>
+            <div class="form-group"><label>Graduation Year</label><input id="edit_al_year"></div>
+            <div class="form-group"><label>Department</label><input id="edit_al_dept"></div>
+            <div class="form-group"><label>Company</label><input id="edit_al_company"></div>
+            <div class="form-group"><label>Position</label><input id="edit_al_position"></div>
+            <div class="form-actions">
+                <button class="btn btn-secondary" onclick="closeModal('editAlumniModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="saveEditedAlumni()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add News Modal -->
+    <div id="addNewsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h3>Add News</h3><button class="close-btn" onclick="closeModal('addNewsModal')">&times;</button></div>
+            <div class="form-group"><label>Title</label><input id="news_title"></div>
+            <div class="form-group"><label>Date</label><input id="news_date" type="date"></div>
+            <div class="form-group"><label>Summary</label><textarea id="news_summary" rows="4"></textarea></div>
+            <div class="form-actions"><button class="btn btn-secondary" onclick="closeModal('addNewsModal')">Cancel</button><button class="btn btn-primary" onclick="addNews()">Add News</button></div>
+        </div>
+    </div>
+
+    <!-- Add Event Modal -->
+    <div id="addEventModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h3>Create Event</h3><button class="close-btn" onclick="closeModal('addEventModal')">&times;</button></div>
+            <div class="form-group"><label>Event Name</label><input id="ev_name"></div>
+            <div class="form-group"><label>Date</label><input id="ev_date" type="date"></div>
+            <div class="form-group"><label>Location</label><input id="ev_loc"></div>
+            <div class="form-group"><label>Description</label><textarea id="ev_desc" rows="3"></textarea></div>
+            <div class="form-actions"><button class="btn btn-secondary" onclick="closeModal('addEventModal')">Cancel</button><button class="btn btn-primary" onclick="addEvent()">Create</button></div>
+        </div>
+    </div>
+
+    <!-- Add Group Modal -->
+    <div id="addGroupModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h3>Create Group</h3><button class="close-btn" onclick="closeModal('addGroupModal')">&times;</button></div>
+            <div class="form-group"><label>Group Name</label><input id="grp_name"></div>
+            <div class="form-group"><label>Members (comma separated)</label><input id="grp_members"></div>
+            <div class="form-group"><label>Type</label><input id="grp_type"></div>
+            <div class="form-actions"><button class="btn btn-secondary" onclick="closeModal('addGroupModal')">Cancel</button><button class="btn btn-primary" onclick="addGroup()">Create</button></div>
+        </div>
+    </div>
+
+    <!-- Add Donation Modal -->
+    <div id="addDonationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h3>Add Donation</h3><button class="close-btn" onclick="closeModal('addDonationModal')">&times;</button></div>
+            <div class="form-group"><label>Donor</label><input id="donor_name"></div>
+            <div class="form-group"><label>Amount</label><input id="don_amount" type="number"></div>
+            <div class="form-group"><label>Date</label><input id="don_date" type="date"></div>
+            <div class="form-actions"><button class="btn btn-secondary" onclick="closeModal('addDonationModal')">Cancel</button><button class="btn btn-primary" onclick="addDonation()">Add</button></div>
+        </div>
+    </div>
+
+    <!-- Add Notice Modal -->
+    <div id="addNoticeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h3>Add Notice</h3><button class="close-btn" onclick="closeModal('addNoticeModal')">&times;</button></div>
+            <div class="form-group"><label>Title</label><input id="notice_title"></div>
+            <div class="form-group"><label>Date</label><input id="notice_date" type="date"></div>
+            <div class="form-group"><label>Summary</label><textarea id="notice_summary" rows="3"></textarea></div>
+            <div class="form-actions"><button class="btn btn-secondary" onclick="closeModal('addNoticeModal')">Cancel</button><button class="btn btn-primary" onclick="addNotice()">Add</button></div>
+        </div>
+    </div>
+
+    <!-- ---------- CHATBOT UI ---------- -->
+    <div class="hc-chat-fab" id="hcFab" title="Chat with Hive Bot">
+        <i class="fas fa-comment"></i>
+    </div>
+
+    <div class="hc-chat-window" id="hcWindow" aria-hidden="true">
+        <div class="hc-chat-header">
+            <div class="hc-chat-title"><i class="fas fa-robot"></i> Hive Bot</div>
+            <div style="display:flex;gap:8px;">
+                <button class="btn btn-secondary" onclick="clearChat()">Clear</button>
+                <button class="btn btn-secondary" onclick="toggleChat()">Close</button>
+            </div>
+        </div>
+        <div class="hc-chat-body" id="hcBody"></div>
+        <div class="hc-chat-footer">
+            <input id="hcInput" placeholder="Ask something about the platform (eg. 'How many students?')" onkeydown="if(event.key==='Enter'){sendChat();}">
+            <button onclick="sendChat()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <script>
+        /* ======================
+           Minimal in-browser backend (localStorage)
+           ====================== */
+
+        const DB = {
+            studentsKey: 'hc_students_v1',
+            alumniKey: 'hc_alumni_v1',
+            newsKey: 'hc_news_v1',
+            eventsKey: 'hc_events_v1',
+            groupsKey: 'hc_groups_v1',
+            donationsKey: 'hc_donations_v1',
+            noticesKey: 'hc_notices_v1',
+            settingsKey: 'hc_settings_v1',
+            chatKey: 'hc_chat_v1'
+        };
+
+        // --- init sample data if not present
+        function ensureInitialData(){
+            if(!localStorage.getItem(DB.studentsKey)){
+                const sampleStudents = [
+                    {name:'John Smith', sid:'CS2024001', dept:'Computer Science', year:'Final Year', status:'Active'},
+                    {name:'Sarah Johnson', sid:'EE2023045', dept:'Electrical Engineering', year:'Third Year', status:'Active'},
+                    {name:'Mike Wilson', sid:'ME2022078', dept:'Mechanical Engineering', year:'Second Year', status:'Inactive'}
+                ];
+                localStorage.setItem(DB.studentsKey, JSON.stringify(sampleStudents));
+            }
+            if(!localStorage.getItem(DB.alumniKey)){
+                const sampleAlumni = [
+                    {name:'Emily Davis', year:'2020', dept:'Computer Science', company:'Google', position:'Software Engineer', status:'Active'},
+                    {name:'Robert Brown', year:'2019', dept:'Electrical Engineering', company:'Tesla', position:'Hardware Engineer', status:'Active'},
+                    {name:'Lisa Anderson', year:'2018', dept:'Mechanical Engineering', company:'SpaceX', position:'Design Engineer', status:'Inactive'}
+                ];
+                localStorage.setItem(DB.alumniKey, JSON.stringify(sampleAlumni));
+            }
+            if(!localStorage.getItem(DB.newsKey)){
+                const sampleNews = [
+                    {title:'Placement Drive for 2025 batch', date: (new Date()).toISOString().slice(0,10), summary:'Companies visiting campus for placements.'},
+                    {title:'Annual Alumni Meet scheduled for December', date: (new Date()).toISOString().slice(0,10), summary:'Join us for networking and nostalgia.'}
+                ];
+                localStorage.setItem(DB.newsKey, JSON.stringify(sampleNews));
+            }
+            if(!localStorage.getItem(DB.eventsKey)){
+                const sampleEvents = [
+                    {name:'Hackathon 2025', date:'2025-10-12', location:'Main Auditorium', description:'48 hour coding challenge'}
+                ];
+                localStorage.setItem(DB.eventsKey, JSON.stringify(sampleEvents));
+            }
+            if(!localStorage.getItem(DB.groupsKey)){
+                const sampleGroups = [
+                    {name:'B.Tech 2025 Group', members:['Amit','Neha','Rajan'], type:'Batch'},
+                    {name:'Alumni – Tech Industry', members:['Riya','Saket'], type:'Alumni'}
+                ];
+                localStorage.setItem(DB.groupsKey, JSON.stringify(sampleGroups));
+            }
+            if(!localStorage.getItem(DB.donationsKey)){
+                const sampleDonations = [
+                    {donor:'Alumni Association', amount:100000, date:'2025-08-01'}
+                ];
+                localStorage.setItem(DB.donationsKey, JSON.stringify(sampleDonations));
+            }
+            if(!localStorage.getItem(DB.noticesKey)){
+                const sampleNotices = [
+                    {title:'Library will remain closed on 15th August', date:'2025-08-15', summary:'Due to maintenance'},
+                    {title:'Submit project reports before 20th September', date:'2025-09-20', summary:'Upload to LMS'}
+                ];
+                localStorage.setItem(DB.noticesKey, JSON.stringify(sampleNotices));
+            }
+            if(!localStorage.getItem(DB.settingsKey)){
+                localStorage.setItem(DB.settingsKey, JSON.stringify({platformName:'Hive Connection'}));
+            }
+            if(!localStorage.getItem(DB.chatKey)){
+                localStorage.setItem(DB.chatKey, JSON.stringify([]));
+            }
+        }
+
+        /* ====== Helpers to read/write ====== */
+        function read(key){ return JSON.parse(localStorage.getItem(key) || '[]'); }
+        function write(key, data){ localStorage.setItem(key, JSON.stringify(data)); }
+
+        /* ========== Navigation (SPA-ish) ========== */
+        function switchSection(id, push=true){
+            // hide all content sections
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            // deactivate nav items
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            // activate target nav item
+            const targetNav = document.querySelector('.nav-item[data-section="'+id+'"]');
+            if(targetNav) targetNav.classList.add('active');
+
+            const section = document.getElementById(id);
+            if(section) section.classList.add('active');
+
+            // update document title
+            document.title = 'Hive Connection - ' + (section ? section.querySelector('.header h1')?.innerText || id : id);
+
+            if(push){
+                history.pushState({section:id}, '', '#'+id);
+            }
+
+            // call render for that section if available
+            if(id === 'students') renderStudents();
+            if(id === 'alumni') renderAlumni();
+            if(id === 'news') renderNews();
+            if(id === 'events') renderEvents();
+            if(id === 'chatgroups') renderGroups();
+            if(id === 'donations') renderDonations();
+            if(id === 'notices') renderNotices();
+            updateStats();
+        }
+
+        // handle back/forward navigation
+        window.onpopstate = function(e){
+            const sec = (e.state && e.state.section) || (location.hash ? location.hash.replace('#','') : 'dashboard');
+            switchSection(sec, false);
+        };
+
+        /* ========== Students CRUD ========== */
+        function renderStudents(){
+            const tbody = document.querySelector('#studentsTable tbody');
+            const students = read(DB.studentsKey);
+            tbody.innerHTML = '';
+            students.forEach((s, idx) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${escapeHtml(s.name)}</td>
+                    <td>${escapeHtml(s.sid)}</td>
+                    <td>${escapeHtml(s.dept)}</td>
+                    <td>${escapeHtml(s.year)}</td>
+                    <td><span class="status-badge ${s.status==='Active'?'status-active':'status-inactive'}">${s.status}</span></td>
+                    <td>
+                        <i class="fas fa-edit" style="cursor:pointer;color:#e91e63;margin-right:10px;" onclick="openEditStudent(${idx})"></i>
+                        <i class="fas fa-trash" style="cursor:pointer;color:#f44336;" onclick="deleteStudent(${idx})"></i>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function addStudent(){
+            const name = document.getElementById('stu_name').value.trim();
+            const sid = document.getElementById('stu_id').value.trim();
+            const dept = document.getElementById('stu_dept').value.trim();
+            const year = document.getElementById('stu_year').value.trim();
+            if(!name || !sid){ alert('Name and Student ID required'); return; }
+            const students = read(DB.studentsKey);
+            students.push({name, sid, dept, year, status:'Active'});
+            write(DB.studentsKey, students);
+            closeModal('addStudentModal');
+            clearStudentForm();
+            if(document.getElementById('students')) renderStudents();
+            updateStats();
+        }
+
+        function clearStudentForm(){
+            ['stu_name','stu_id','stu_dept','stu_year'].forEach(id => document.getElementById(id).value='');
+        }
+
+        function openEditStudent(index){
+            const students = read(DB.studentsKey);
+            const s = students[index];
+            document.getElementById('edit_stu_index').value = index;
+            document.getElementById('edit_stu_name').value = s.name;
+            document.getElementById('edit_stu_id').value = s.sid;
+            document.getElementById('edit_stu_dept').value = s.dept;
+            document.getElementById('edit_stu_year').value = s.year;
+            openModal('editStudentModal');
+        }
+
+        function saveEditedStudent(){
+            const idx = +document.getElementById('edit_stu_index').value;
+            const students = read(DB.studentsKey);
+            students[idx].name = document.getElementById('edit_stu_name').value.trim();
+            students[idx].sid = document.getElementById('edit_stu_id').value.trim();
+            students[idx].dept = document.getElementById('edit_stu_dept').value.trim();
+            students[idx].year = document.getElementById('edit_stu_year').value.trim();
+            write(DB.studentsKey, students);
+            closeModal('editStudentModal');
+            if(document.getElementById('students')) renderStudents();
+        }
+
+        function deleteStudent(index){
+            if(!confirm('Delete this student?')) return;
+            const students = read(DB.studentsKey);
+            students.splice(index,1);
+            write(DB.studentsKey, students);
+            if(document.getElementById('students')) renderStudents();
+            updateStats();
+        }
+
+        /* ========== Alumni CRUD ========== */
+        function renderAlumni(){
+            const tbody = document.querySelector('#alumniTable tbody');
+            const arr = read(DB.alumniKey);
+            tbody.innerHTML = '';
+            arr.forEach((a,idx) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${escapeHtml(a.name)}</td>
+                    <td>${escapeHtml(a.year)}</td>
+                    <td>${escapeHtml(a.dept)}</td>
+                    <td>${escapeHtml(a.company)}</td>
+                    <td>${escapeHtml(a.position)}</td>
+                    <td><span class="status-badge ${a.status==='Active'?'status-active':'status-inactive'}">${a.status||'Active'}</span></td>
+                    <td>
+                        <i class="fas fa-edit" style="cursor:pointer;color:#e91e63;margin-right:10px;" onclick="openEditAlumni(${idx})"></i>
+                        <i class="fas fa-trash" style="cursor:pointer;color:#f44336;" onclick="deleteAlumni(${idx})"></i>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function addAlumni(){
+            const obj = {
+                name: document.getElementById('al_name').value.trim(),
+                year: document.getElementById('al_year').value.trim(),
+                dept: document.getElementById('al_dept').value.trim(),
+                company: document.getElementById('al_company').value.trim(),
+                position: document.getElementById('al_position').value.trim(),
+                status: 'Active'
+            };
+            if(!obj.name){ alert('Name required'); return; }
+            const arr = read(DB.alumniKey);
+            arr.push(obj);
+            write(DB.alumniKey, arr);
+            closeModal('addAlumniModal');
+            renderAlumni();
+            updateStats();
+        }
+
+        function openEditAlumni(idx){
+            const arr = read(DB.alumniKey);
+            const a = arr[idx];
+            document.getElementById('edit_al_index').value = idx;
+            document.getElementById('edit_al_name').value = a.name;
+            document.getElementById('edit_al_year').value = a.year;
+            document.getElementById('edit_al_dept').value = a.dept;
+            document.getElementById('edit_al_company').value = a.company;
+            document.getElementById('edit_al_position').value = a.position;
+            openModal('editAlumniModal');
+        }
+
+        function saveEditedAlumni(){
+            const idx = +document.getElementById('edit_al_index').value;
+            const arr = read(DB.alumniKey);
+            arr[idx].name = document.getElementById('edit_al_name').value.trim();
+            arr[idx].year = document.getElementById('edit_al_year').value.trim();
+            arr[idx].dept = document.getElementById('edit_al_dept').value.trim();
+            arr[idx].company = document.getElementById('edit_al_company').value.trim();
+            arr[idx].position = document.getElementById('edit_al_position').value.trim();
+            write(DB.alumniKey, arr);
+            closeModal('editAlumniModal');
+            renderAlumni();
+        }
+
+        function deleteAlumni(idx){
+            if(!confirm('Delete this alumni?')) return;
+            const arr = read(DB.alumniKey);
+            arr.splice(idx,1);
+            write(DB.alumniKey, arr);
+            renderAlumni();
+            updateStats();
+        }
+
+        /* ========== News CRUD ========== */
+        function renderNews(){
+            const tbody = document.querySelector('#newsTable tbody');
+            const arr = read(DB.newsKey);
+            tbody.innerHTML = '';
+            arr.forEach((n,idx) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${escapeHtml(n.title)}</td><td>${escapeHtml(n.date)}</td><td>${escapeHtml(n.summary)}</td>
+                    <td>
+                        <i class="fas fa-trash" style="cursor:pointer;color:#f44336;" onclick="deleteNews(${idx})"></i>
+                    </td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function addNews(){
+            const obj = {title:document.getElementById('news_title').value.trim(), date:document.getElementById('news_date').value||(new Date()).toISOString().slice(0,10), summary:document.getElementById('news_summary').value.trim()};
+            if(!obj.title){ alert('Title required'); return; }
+            const arr = read(DB.newsKey);
+            arr.unshift(obj);
+            write(DB.newsKey, arr);
+            closeModal('addNewsModal');
+            renderNews();
+        }
+
+        function deleteNews(idx){
+            if(!confirm('Delete this news item?')) return;
+            const arr = read(DB.newsKey); arr.splice(idx,1); write(DB.newsKey, arr);
+            renderNews();
+        }
+
+        /* ========== Events CRUD ========== */
+        function renderEvents(){
+            const container = document.getElementById('eventsList');
+            const arr = read(DB.eventsKey);
+            container.innerHTML = '';
+            arr.forEach((e, idx) => {
+                const div = document.createElement('div');
+                div.className = 'event-card';
+                div.innerHTML = `
+                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                        <div>
+                            <div class="event-date">${escapeHtml(e.date)}</div>
+                            <h3 style="margin:6px 0;color:white">${escapeHtml(e.name)}</h3>
+                            <div style="color:rgba(255,255,255,0.7)">${escapeHtml(e.location)}</div>
+                        </div>
+                        <div style="text-align:right">
+                            <i class="fas fa-trash" style="cursor:pointer;color:#f44336;" onclick="deleteEvent(${idx})"></i>
+                        </div>
+                    </div>
+                    <p style="margin-top:10px;color:rgba(255,255,255,0.85)">${escapeHtml(e.description)}</p>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function addEvent(){
+            const obj = {name:document.getElementById('ev_name').value.trim(), date:document.getElementById('ev_date').value, location:document.getElementById('ev_loc').value.trim(), description:document.getElementById('ev_desc').value.trim()};
+            if(!obj.name || !obj.date){ alert('Event name and date required'); return; }
+            const arr = read(DB.eventsKey); arr.unshift(obj); write(DB.eventsKey, arr);
+            closeModal('addEventModal');
+            renderEvents();
+            updateStats();
+        }
+
+        function deleteEvent(idx){
+            if(!confirm('Delete this event?')) return;
+            const arr = read(DB.eventsKey); arr.splice(idx,1); write(DB.eventsKey, arr); renderEvents(); updateStats();
+        }
+
+        /* ========== Groups CRUD ========== */
+        function renderGroups(){
+            const tbody = document.querySelector('#groupsTable tbody');
+            const arr = read(DB.groupsKey);
+            tbody.innerHTML = '';
+            arr.forEach((g, idx) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${escapeHtml(g.name)}</td><td>${escapeHtml((g.members||[]).join(', '))}</td><td>${escapeHtml(g.type||'N/A')}</td>
+                    <td><i class="fas fa-trash" style="cursor:pointer;color:#f44336;" onclick="deleteGroup(${idx})"></i></td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function addGroup(){
+            const obj = {name:document.getElementById('grp_name').value.trim(), members:(document.getElementById('grp_members').value||'').split(',').map(s=>s.trim()).filter(Boolean), type:document.getElementById('grp_type').value.trim()};
+            if(!obj.name){ alert('Group name required'); return; }
+            const arr = read(DB.groupsKey); arr.unshift(obj); write(DB.groupsKey, arr);
+            closeModal('addGroupModal');
+            renderGroups();
+            updateStats();
+        }
+
+        function deleteGroup(idx){
+            if(!confirm('Delete this group?')) return;
+            const arr = read(DB.groupsKey); arr.splice(idx,1); write(DB.groupsKey, arr); renderGroups(); updateStats();
+        }
+
+        /* ========== Donations CRUD ========== */
+        function renderDonations(){
+            const tbody = document.querySelector('#donationsTable tbody');
+            const arr = read(DB.donationsKey);
+            tbody.innerHTML = '';
+            arr.forEach((d, idx) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${escapeHtml(d.donor)}</td><td>₹${escapeHtml(String(d.amount))}</td><td>${escapeHtml(d.date)}</td><td><i class="fas fa-trash" style="cursor:pointer;color:#f44336;" onclick="deleteDonation(${idx})"></i></td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function addDonation(){
+            const obj = {donor:document.getElementById('donor_name').value.trim(), amount: Number(document.getElementById('don_amount').value), date:document.getElementById('don_date').value || (new Date()).toISOString().slice(0,10)};
+            if(!obj.donor || !obj.amount){ alert('Donor and amount required'); return; }
+            const arr = read(DB.donationsKey); arr.unshift(obj); write(DB.donationsKey, arr);
+            closeModal('addDonationModal');
+            renderDonations();
+            updateStats();
+        }
+
+        function deleteDonation(idx){
+            if(!confirm('Delete donation?')) return;
+            const arr = read(DB.donationsKey); arr.splice(idx,1); write(DB.donationsKey, arr); renderDonations(); updateStats();
+        }
+
+        /* ========== Notices CRUD ========== */
+        function renderNotices(){
+            const tbody = document.querySelector('#noticesTable tbody');
+            const arr = read(DB.noticesKey);
+            tbody.innerHTML = '';
+            arr.forEach((n, idx) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${escapeHtml(n.title)}</td><td>${escapeHtml(n.date)}</td><td>${escapeHtml(n.summary)}</td><td><i class="fas fa-trash" style="cursor:pointer;color:#f44336;" onclick="deleteNotice(${idx})"></i></td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function addNotice(){
+            const obj = {title:document.getElementById('notice_title').value.trim(), date:document.getElementById('notice_date').value || (new Date()).toISOString().slice(0,10), summary:document.getElementById('notice_summary').value.trim()};
+            if(!obj.title){ alert('Title required'); return; }
+            const arr = read(DB.noticesKey); arr.unshift(obj); write(DB.noticesKey, arr); closeModal('addNoticeModal'); renderNotices();
+        }
+
+        function deleteNotice(idx){
+            if(!confirm('Delete this notice?')) return;
+            const arr = read(DB.noticesKey); arr.splice(idx,1); write(DB.noticesKey, arr); renderNotices();
+        }
+
+        /* ========== Settings ========== */
+        function saveSettings(){
+            const plat = document.getElementById('settingPlatformName').value.trim() || 'Hive Connection';
+            write(DB.settingsKey, {platformName:plat});
+            alert('Settings saved (local)');
+        }
+
+        /* ========== Utility & UI: modals, escape, stats, reset ========== */
+        function openModal(id){ document.getElementById(id).style.display='block'; }
+        function closeModal(id){ document.getElementById(id).style.display='none'; }
+        function escapeHtml(str){ if(!str && str!==0) return ''; return String(str).replace(/[&<>"'`]/g, s=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;',"`":'&#96;' })[s]); }
+
+        function updateStats(){
+            const students = read(DB.studentsKey).length;
+            const alumni = read(DB.alumniKey).length;
+            const events = read(DB.eventsKey).length;
+            const groups = read(DB.groupsKey).length;
+            document.getElementById('statStudents').innerText = students.toLocaleString();
+            document.getElementById('statAlumni').innerText = alumni.toLocaleString();
+            document.getElementById('statEvents').innerText = events.toLocaleString();
+            document.getElementById('statGroups').innerText = groups.toLocaleString();
+            // update badges counts in sidebar
+            const studBadge = document.querySelector('.nav-item[data-section="students"] .badge');
+            if(studBadge) studBadge.textContent = students;
+            const alBadge = document.querySelector('.nav-item[data-section="alumni"] .badge');
+            if(alBadge) alBadge.textContent = alumni;
+        }
+
+        function resetData(){
+            if(!confirm('This will clear all data stored locally (students, alumni, news, etc.). Continue?')) return;
+            localStorage.removeItem(DB.studentsKey);
+            localStorage.removeItem(DB.alumniKey);
+            localStorage.removeItem(DB.newsKey);
+            localStorage.removeItem(DB.eventsKey);
+            localStorage.removeItem(DB.groupsKey);
+            localStorage.removeItem(DB.donationsKey);
+            localStorage.removeItem(DB.noticesKey);
+            localStorage.removeItem(DB.settingsKey);
+            ensureInitialData();
+            // re-render visible
+            renderAll();
+        }
+
+        function renderAll(){
+            renderStudents(); renderAlumni(); renderNews(); renderEvents(); renderGroups(); renderDonations(); renderNotices();
+            updateStats();
+        }
+
+        /* ========== Chatbot (simple local one) ========== */
+        const hcFab = document.getElementById('hcFab');
+        const hcWindow = document.getElementById('hcWindow');
+        const hcBody = document.getElementById('hcBody');
+        const hcInput = document.getElementById('hcInput');
+
+        hcFab.addEventListener('click', toggleChat);
+
+        function toggleChat(){
+            hcWindow.classList.toggle('visible');
+            if(hcWindow.classList.contains('visible')){
+                hcBody.scrollTop = hcBody.scrollHeight;
+            }
+        }
+
+        function loadChat(){
+            const conv = read(DB.chatKey);
+            hcBody.innerHTML = '';
+            conv.forEach(m => appendChatMessage(m.sender, m.text));
+            hcBody.scrollTop = hcBody.scrollHeight;
+        }
+
+        function appendChatMessage(sender, text){
+            const div = document.createElement('div');
+            div.className = 'hc-msg ' + (sender === 'user' ? 'user' : 'bot');
+            div.innerText = text;
+            hcBody.appendChild(div);
+        }
+
+        function saveChatMessage(sender, text){
+            const conv = read(DB.chatKey);
+            conv.push({sender, text, t: (new Date()).toISOString()});
+            write(DB.chatKey, conv);
+        }
+
+        function clearChat(){
+            if(!confirm('Clear chat history?')) return;
+            write(DB.chatKey, []);
+            loadChat();
+        }
+
+        function sendChat(){
+            const text = hcInput.value.trim();
+            if(!text) return;
+            appendChatMessage('user', text);
+            saveChatMessage('user', text);
+            hcInput.value = '';
+            hcBody.scrollTop = hcBody.scrollHeight;
+            // simple rule-based replies
+            setTimeout(()=> {
+                const botReply = generateBotReply(text);
+                appendChatMessage('bot', botReply);
+                saveChatMessage('bot', botReply);
+                hcBody.scrollTop = hcBody.scrollHeight;
+            }, 500);
+        }
+
+        function generateBotReply(msg){
+            const m = msg.toLowerCase();
+            if(m.includes('students')) return `Currently there are ${read(DB.studentsKey).length} students registered.`;
+            if(m.includes('alumni')) return `There are ${read(DB.alumniKey).length} alumni in the directory.`;
+            if(m.includes('events')) return `Upcoming events: ${read(DB.eventsKey).length}. Use the Events page to view details.`;
+            if(m.includes('news')) return `Open the News page to view or add news items.`;
+            if(m.includes('help')) return `I can help with: students, alumni, news, events, donations, notices. Try: "How many students?" or "Show events".`;
+            if(m.includes('reset')) return `To reset local data, go to Settings → Reset DB (local).`;
+            return `Sorry — I didn't get that. Try asking about students, alumni, events, donations or 'help'.`;
+        }
+
+        /* ========== Small utility: escape + event handlers ========== */
+        function escapeInputVal(id){
+            const el = document.getElementById(id);
+            return el ? el.value.trim() : '';
+        }
+
+        /* ========== initialisation ========== */
+        ensureInitialData();
+        renderAll();
+
+        // global search: basic search across students/alumni/news titles -> opens list with matched items highlighted
+        document.getElementById('globalSearch').addEventListener('keydown', function(e){
+            if(e.key !== 'Enter') return;
+            const q = this.value.trim().toLowerCase();
+            if(!q) return alert('Type a search and press Enter');
+            // search students
+            const students = read(DB.studentsKey).filter(s => (s.name+s.sid+s.dept+s.year).toLowerCase().includes(q));
+            if(students.length){
+                switchSection('students');
+                // temporarily highlight matches by scrolling first match into view
+                setTimeout(()=>{ renderStudents(); }, 60);
+                return;
+            }
+            const alumni = read(DB.alumniKey).filter(a => (a.name+a.company+a.position+a.dept).toLowerCase().includes(q));
+            if(alumni.length){ switchSection('alumni'); setTimeout(()=>{ renderAlumni(); },60); return; }
+            const news = read(DB.newsKey).filter(n => (n.title+n.summary).toLowerCase().includes(q));
+            if(news.length){ switchSection('news'); setTimeout(()=>{ renderNews(); },60); return; }
+            alert('No results found (search checks Students, Alumni, News)');
+        });
+
+        // wire up modal close by clicking backdrop
+        document.querySelectorAll('.modal').forEach(m => {
+            m.addEventListener('click', function(ev){
+                if(ev.target === m) m.style.display = 'none';
+            });
+        });
+
+        // on load, check hash
+        window.addEventListener('load', function(){
+            const hash = location.hash ? location.hash.replace('#','') : 'dashboard';
+            // if section exists, switch, else dashboard
+            if(document.getElementById(hash)) switchSection(hash, false);
+            loadChat();
+        });
+
+        /* ========== small helper to keep code safe (escape) ========== */
+        // (already defined escapeHtml above)
+
+    </script>
+</body>
+</html>

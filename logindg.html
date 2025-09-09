@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Hive Connection</title>
+  <link rel="stylesheet" href="home.css">
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin-top: 100px; }
+    .login-box { padding: 40px; border-radius: 10px; display: inline-block; background: #f4f4f4; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    .login-box h2 { margin-bottom: 20px; }
+    .login-box input, .login-box select, .login-box button {
+      padding: 12px; margin: 10px; width: 250px; font-size: 16px; border-radius: 6px; border: 1px solid #ccc;
+    }
+    .login-box button { background: purple; color: white; cursor: pointer; border: none; }
+    .login-box button:hover { background: darkviolet; }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <h2>Login</h2>
+    <form onsubmit="login(event)">
+      <input type="text" id="username" placeholder="Enter username" required><br>
+      <input type="password" id="password" placeholder="Enter password" required><br>
+      <select id="role">
+        <option value="student">Student</option>
+        <option value="alumni">Alumni</option>
+        <option value="admin">Admin</option>
+      </select><br>
+      <button type="submit">Login</button>
+    </form>
+  </div>
+
+  <script>
+    function login(event) {
+      event.preventDefault();
+      let role = document.getElementById("role").value;
+
+      if (role === "student") {
+        window.location.href = "student.html";
+      } else if (role === "alumni") {
+        window.location.href = "alumni.html";
+      } else if (role === "admin") {
+        window.location.href = "admin.html";
+      }
+    }
+  </script>
+</body>
+</html>
